@@ -1,0 +1,135 @@
+FLAMINGO-P2-001 Platform Capabilities and Non-Capabilities — Answers
+Last Updated: 2026-04-11 (initial draft)
+
+---
+
+SOURCE FILES USED
+---
+- 00-governance/LOCKED-DECISIONS.md (LD-001–LD-043)
+- FLAMINGO-P1-004-role-boundaries-final.md (role definitions, prohibited language, confusion risks)
+- FLAMINGO-P1-005-authority-model-final.md (authority principles AP-001–AP-010, authority matrix)
+- FLAMINGO-P1-006-system-context-final.md (5-layer ecosystem model, system boundaries, white-label constraints §13)
+- FLAMINGO-P1-007-v1-scope-boundary-final.md (in-scope, out-of-scope, deferred, boundary rules)
+- FLAMINGO-P1-009-canonical-transfer-lifecycle-final.md (8-state chain, completion boundary definitions)
+- FLAMINGO-P1-008-source-of-truth-matrix-final.md (SOT assignments informing registry boundary notes)
+- FLAMINGO-P1-012-dependency-map-final.md (gating relationships; P2-001 dependencies)
+
+---
+
+STRUCTURAL DECISIONS
+---
+- Used 15-section purpose-built structure; departed from the standard 14-section core doc template
+  Rationale: A capabilities document requires capability-class sections (Core / Support / Bounded Admin / Non-Capabilities / External-Adjacent) rather than "State/Workflow/Controls" sections. The capability model is the organizing framework.
+
+- Capability classification model uses 5 classes (not 4 or 3)
+  Rationale: "External but Adjacent" needs to be a named class so that the boundary with functions Flamingo coordinates at integration points (KYC/AML routing, TA instruction handoff) is never confused with performing those functions. Conflating "routes to vendor" with "performs KYC" is a high-risk documentation error.
+
+- Each capability in Sections 7 and 8 uses a two-column table: "What Flamingo does" vs. "What Flamingo does NOT do"
+  Rationale: Paired boundary notes prevent the most common documentation drift pattern — accurate positive statement followed by overextension in the next sentence. Forces the writer to name the limit immediately next to the claim.
+
+- Section 10 (Explicit Non-Capabilities) uses a three-column table: Non-Capability / Must Not Be Implied By / Source
+  Rationale: The "Must Not Be Implied By" column is critical — it names the specific documentation or system logic failure modes that would violate each non-capability. This makes the table actionable for reviewers, not just a list of things Flamingo doesn't do.
+
+- Capability Model Overview (Section 5) includes an ASCII tier diagram
+  Rationale: Five-tier capability surface is easier to understand visually than in prose; matches the approach used in P1-006 system context
+
+- Section 12 (Capability Interpretation Rules) contains 8 explicit rules, not just a narrative
+  Rationale: Rules table format makes these enforceable in review; each rule can be cited as a check ID analog
+
+---
+
+CAPABILITY CLASSES SELECTED
+---
+Core Platform Capabilities (4):
+- Transfer Lifecycle Orchestration — the fundamental function of the platform
+- Operational Registry Maintenance — the internal record layer
+- Audit Event Logging — compliance infrastructure
+- White-Label Tenant Serving — the multi-tenant architecture capability
+
+Support / Coordination Capabilities (9):
+- Issuer / Tenant Onboarding Support
+- Investor Intake and Eligibility Routing Support
+- Wallet Registration and Approval Support
+- Document Workflow Support
+- Transfer Request Workflow Support
+- Compliance Review Tooling Support
+- TA Instruction Handoff and Status Tracking Support
+- Holdings Dashboard and Operational Visibility Support
+- Reconciliation Support
+
+Bounded Administrative Capabilities (5):
+- Token Mint / Burn / Freeze Administration
+- Offering Parameter Configuration
+- User and Role Management
+- Allowlist Management
+- Operator Console Controls
+
+Non-Capabilities (16):
+All sourced directly from LD-001–LD-043, P1-004 Section 9, and P1-006 Section 15.
+
+External but Adjacent Functions (10):
+Sourced from P1-006 Sections 7, 11, and 14; P1-007 Section 8.
+
+---
+
+IN-SCOPE CAPABILITIES — COVERAGE DECISIONS
+---
+- "Document workflow support" is listed as a Support capability (§8.4) rather than a Core capability
+  Rationale: Flamingo stores operational copies of documents and provides access control; it does not constitute the legal record of any document. The support framing prevents the document workflow function from being misread as legal document management.
+
+- "Holdings dashboard" is listed under Support capabilities (§8.8) rather than Core
+  Rationale: While the dashboard is central to investor UX, the capability boundary note is more important than its position: operational data from Flamingo's registry ≠ legal ownership record. Placing it in Support (rather than Core) reinforces that the output is an operational view, not an authoritative record.
+
+- Token operations are in Bounded Administrative (§9.1) with hard limits
+  Rationale: Minting, burning, and freezing tokens are real and significant capabilities. They must appear. But each requires a hard limit: minting ≠ issuing a security; burning ≠ legal redemption; freezing ≠ TA-level authority. The bounded admin framing with explicit limits achieves this better than either omitting the capability or listing it without limits.
+
+---
+
+NON-CAPABILITIES — SELECTION RATIONALE
+---
+16 explicit non-capabilities selected. All sourced from locked decisions or Phase 1 boundary analysis.
+
+Key design decisions:
+- REDEEMED ≠ LEGALLY_COMPLETE listed explicitly (LD-042) — the most recently locked completion boundary clarification; high risk of documentation drift
+- TA_ACKNOWLEDGED ≠ TA_RECORDED listed explicitly (LD-027) — the second-most common completion collapse error per P1-011 failure patterns
+- "Tenant config changing core legal logic" listed explicitly — prevents white-label scope inflation, consistent with P1-006 §13
+- "Automated compliance screening" listed explicitly (LD-031) — v1 compliance review is human-reviewed; no automated approval capability exists
+- "Reg A / retail-public / non-accredited workflows" listed — directly from LD-043 (506(c) only); prevents eligibility gate circumvention
+
+---
+
+EXTERNAL / ADJACENT FUNCTIONS — SELECTION RATIONALE
+---
+10 external/adjacent functions listed.
+
+Key design decisions:
+- KYC/AML vendor listed as external adjacent (not Support capability) at the execution level
+  Rationale: Flamingo routes to and stores results from a KYC/AML vendor — but the verification execution is the vendor's function. Flamingo's role is routing + storage. Two different capability descriptions appear: "Investor Intake Support" (Support capability — Flamingo's workflow role) and "KYC/AML identity verification" (External adjacent — the vendor's execution role).
+
+- Same dual treatment for accreditation verification: Flamingo stores eligibility state; the verification function is external.
+
+- "TA legal recording (the legal act)" listed separately from "TA instruction handoff support"
+  Rationale: Sending an instruction (Support capability, §8.7) is Flamingo's function. The legal recording (External adjacent, §11) is Securitize's function. These must be visibly distinct.
+
+---
+
+ASSUMPTIONS USED
+---
+- KYC/AML vendor is not yet selected. Flamingo's intake capabilities are described at the routing/storage level only; vendor-specific integration detail cannot be included.
+- Accreditation provider is not yet confirmed as integrated vs. fully external. The capability description treats it as "routes to / stores results from" with a pending confirmation note.
+- Role permission matrix (CLD-003) is not yet defined. Bounded admin capabilities (§9) describe the capability type but note that specific role permission assignments require definition.
+- The Securitize TA recording mechanics (CLD-001) are not yet confirmed. TA handoff support (§8.7) is described structurally; technical implementation detail is noted as pending.
+- "Forced transfer / recovery" is mentioned under token administration (§9.1) because ERC-3643 includes this function. The limit is noted: requires issuer authorization; Flamingo does not decide unilaterally.
+
+---
+
+UNRESOLVED ITEMS
+---
+UI-P2-001: KYC/AML vendor — [REQUIRES INTERNAL DECISION]
+UI-P2-002: Accreditation provider — [REQUIRES INTERNAL DECISION]
+UI-P2-003: Role permission matrix — [REQUIRES SECOND STREET INPUT]
+UI-P2-004: TA instruction mechanics — [REQUIRES SECURITIZE CONFIRMATION]
+UI-P2-005: Broker-dealer involvement — [REQUIRES REG D COUNSEL INPUT]
+UI-P2-006: Costa Rica cross-border opinion — [REQUIRES CROSS-BORDER LEGAL INPUT]
+
+All 6 are non-blocking for Phase 2 drafting continuation.

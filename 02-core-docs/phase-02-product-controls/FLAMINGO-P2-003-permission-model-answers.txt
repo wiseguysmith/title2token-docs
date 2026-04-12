@@ -1,0 +1,137 @@
+FLAMINGO-P2-003 Permission Model — Answers
+Last Updated: 2026-04-12 (initial draft)
+
+---
+
+SOURCE FILES USED
+---
+- 00-governance/LOCKED-DECISIONS.md (LD-001–LD-043)
+- FLAMINGO-P1-004-role-boundaries-final.md (role boundary rules; confusion risks §10)
+- FLAMINGO-P1-005-authority-model-final.md (authority principles AP-001–AP-010; authority matrix)
+- FLAMINGO-P1-009-canonical-transfer-lifecycle-final.md (8-state chain; actor authority per state §10)
+- FLAMINGO-P2-001-platform-capabilities-and-non-capabilities-final.md (capability surface; bounded admin capabilities; non-capabilities table)
+- FLAMINGO-P2-002-user-and-actor-model-final.md (18 canonical actors; 7 classes; actor permission postures; confusion risks §11)
+
+---
+
+STRUCTURAL DECISIONS
+---
+- 16-section purpose-built structure; departed from standard 14-section core doc template.
+  Rationale: the permission model requires two structural elements the standard template does not anticipate: (1) an action-by-action permission matrix (Section 10), which is a table-dense section that functions as the operational reference for engineers and product designers; and (2) lifecycle-sensitive permission rules (Section 11), which mirror the 8 states from P1-009 with permission-specific annotations. These two sections together require 16 total sections to preserve logical separation.
+
+- 3-layer permission model in Section 5 (Platform Permission / Legal Authority / Technical Execution)
+  Rationale: this is the core architectural boundary statement of the document. The 3-layer model makes explicit what permission control governs (platform operations), what it does not govern (legal authority, which is external — held by TA and Issuer), and what it does not govern either (technical execution layer, which is governed by smart contract logic on Base). Without this diagram, downstream documents risk conflating platform approval with legal completion.
+
+- Permission class codes (V, C, E, R, A, RJ, X, RC, CA, AD) introduced in Section 7 and used throughout
+  Rationale: the action matrix in Section 10 would be unreadably verbose without abbreviated codes. The 10-class taxonomy is the minimal set that covers all meaningful permission types for a v1 tokenized private offering platform — from read-only view to elevated administrative authority. "Reconcile" (RC) and "Correct/Amend" (CA) are both needed as distinct classes because they have different scope: RC resolves discrepancies between Flamingo and the TA; CA amends Flamingo-internal records after the fact.
+
+- 14 permission-controlled objects in Section 8 (rather than actor-centric)
+  Rationale: object-centric permission design is more durable than actor-centric permission design. Actors change (new roles may be added), but objects remain stable. By defining the permission surface per object first, the actor-by-actor model in Section 9 becomes a secondary cross-reference rather than the primary permission definition. This also prevents the common failure mode where a new actor is introduced and its permissions are not anchored to the object model.
+
+- Actor-by-actor model (Section 9) as posture descriptions, not individual action assignments
+  Rationale: Section 9 describes permission posture and scope. The specific action assignments are in the matrix (Section 10). This separation prevents Section 9 from becoming a redundant and potentially contradictory version of Section 10. Section 9 answers "what kind of permission does this actor hold?" Section 10 answers "what specific actions may this actor perform?"
+
+- Lifecycle-sensitive permission rules in Section 11 mirroring the 8-state chain from P1-009
+  Rationale: the lifecycle (P1-009) and the permission model (P2-003) are tightly coupled. Every state change requires an authorized actor. Rather than scattering permission-per-state notes throughout Sections 9–10, a dedicated Section 11 that mirrors the 8 states allows engineers and product designers to look up any state and immediately find who may advance it and what is prohibited. §11.7 and §11.8 carry the two most critical permission constraints in the document.
+
+- Override principles OVR-001–OVR-005 as a separate sub-framework (Section 12)
+  Rationale: override and correction actions are elevated-permission paths that deviate from the normal workflow. Treating them as a mini-sub-framework (rather than a few bullet points under Platform Administrator permissions) ensures they are explicitly governed by identifiable rules that can be cited in downstream documents. OVR-003 (all override actions require timestamped audit entry with documented justification) is the most operationally important of the five.
+
+- Prohibited permission assumptions table in Section 13 (rather than inline prohibitions)
+  Rationale: prohibited assumptions are the most common source of downstream documentation errors. Listing them as a dedicated table — with the correct rule and the source citation — creates a reusable reference that Phase 3 engineers, UI designers, and writers can use as a check when building or reviewing any new feature. The 13 items in the table are drawn from the 10 authority principles and the most common transfer-lifecycle conflation risks.
+
+---
+
+PERMISSION PRINCIPLE DERIVATIONS
+---
+PP-001 (platform permission ≠ legal authority) ← AP-001, LD-007
+PP-002 (approval ≠ legal completion) ← AP-004, LD-025, LD-028
+PP-003 (no bypass of admin-reviewed transfer) ← LD-023, LD-029, LD-031
+PP-004 (no direct TA record mutation) ← AP-006, LD-013
+PP-005 (executing ≠ legal completion) ← AP-002, LD-026
+PP-006 (no investor self-service execution) ← LD-023, LD-024, LD-029, LD-032
+PP-007 (override/correction is elevated and bounded) ← derived from LD-022, LD-023
+PP-008 (tenant config cannot redefine core permissions) ← P1-006 §13, LD-021
+PP-009 (view ≠ act) ← operational principle; reinforces PP-001
+PP-010 (sensitive data access is role-restricted) ← LD-038
+
+The 10 permission principles are a product-layer translation of the 10 authority principles (AP-001–AP-010). PP-001–PP-006 map directly to AP-001–AP-006. PP-007–PP-010 address product-layer permissions that the authority model does not explicitly name (override governance, tenant bounds, view/act distinction, sensitive data access).
+
+---
+
+PERMISSION CLASS DESIGN DECISIONS
+---
+- 10 classes are the minimal set that covers the full permission surface without conflation. Key distinctions:
+  - "Review" (R) is separate from "Approve" (A): a reviewer may record notes and findings without having approval authority. This allows a design where CRO has R + A while a PA has R but not A at UNDER_REVIEW — or vice versa, depending on CLD-003 resolution.
+  - "Execute" (X) is separate from "Approve" (A): the Platform Administrator who approves a wallet registration is different from the system that executes the allowlist update transaction. This separation enforces the constraint that on-chain execution is a system operation, not a user operation.
+  - "Reconcile" (RC) and "Correct/Amend" (CA) are separate: RC = resolving breaks between systems; CA = amending an in-system record after the fact. RC may be a more frequent operation; CA is elevated and rarer.
+  - "Administer" (AD) is the broadest class, covering user management, role assignment, platform configuration, and offering configuration. It is explicitly not a legal authority class.
+
+---
+
+MATRIX DESIGN DECISIONS
+---
+- The action matrix is organized by workflow area (Offering Management, Investor Management, Wallet Management, Transfer, Review, Execution, TA Handoff, Token Control, Audit, Reconciliation, Platform Admin) rather than by actor. This matches how engineers will use it: to look up a specific action and see who can perform it.
+
+- [P] tag used throughout to mark rows where the CRO vs. PA scope is pending CLD-003 resolution. This is not a placeholder — it is an explicit signal that the structural assignment exists but the specific role distinction is pending Second Street input.
+
+- System (SYS) column added as a fourth column to capture system-generated events (state transitions from on-chain events, TA signals) that are not human-initiated. This prevents the common error of assigning these events to Platform Administrator by default in UI or workflow design.
+
+- Token Control Actions section separates Submit / Approve / Execute into three distinct row types. All Execute rows are SYS-only. This reinforces that no human actor can directly execute an on-chain operation — the system translates a platform-approved request into a smart contract operation.
+
+---
+
+LIFECYCLE-SENSITIVE RULES DECISIONS
+---
+- §11.7 (TA_RECORDED) and §11.8 (LEGALLY_COMPLETE) are the two most restrictive states in the model. Both are system-only. Both are stated with "no human actor may assert" language. This is the most important permission constraint in the document — stated in both §11 and in the prohibited assumptions table (§13).
+
+- §11.2 (UNDER_REVIEW) includes a pending item note (CLD-003 tag) for whether PA may approve/reject or whether CRO is the exclusive decision-maker. The structural constraint (human review is mandatory; no automated bypass) is stated as a locked rule regardless of role assignment outcome.
+
+- §11.4 (CHAIN_EXECUTED) includes an explicit "PA may not manually assert CHAIN_EXECUTED without an actual on-chain event confirmation" note. This prevents a failure mode where an admin manually records a state as if it occurred when the automated event capture failed.
+
+---
+
+PROHIBITED ASSUMPTIONS LIST DESIGN
+---
+13 prohibited assumptions were selected based on:
+1. The 10 authority principles (AP-001–AP-010) — each principle has a corresponding prohibited assumption
+2. The most common conflation risks identified in P1-004 §10 (role confusion risks) and P2-002 §11 (actor ambiguity risks)
+3. Three additional v1-specific risks: PA self-approval of wallet; token burn ≠ LEGALLY_COMPLETE; audit log modification
+
+The table format (Prohibited Assumption / Correct Rule / Source) is designed to be usable as a review checklist for UI mockups and API documentation — any downstream artifact can be checked against this table before review.
+
+---
+
+OVERRIDE PRINCIPLES RATIONALE
+---
+OVR-001 restates PP-003 in the override context: override paths are the most tempting place to bypass workflow requirements, so the constraint must be explicitly repeated.
+OVR-002 restates the LEGALLY_COMPLETE constraint in the override context: manual state corrections could otherwise be used to force the terminal state.
+OVR-003 (audit trail required for all overrides) is the operational enforcement mechanism for OVR-001 and OVR-002.
+OVR-004 and OVR-005 prevent override permissions from being assumed as default admin capabilities or extended to TA records.
+
+---
+
+UNRESOLVED ITEMS
+---
+UI-P3-001: Role permission matrix (CLD-003) — [REQUIRES SECOND STREET INPUT]
+UI-P3-002: Tenant-level access tier — [REQUIRES INTERNAL DECISION]
+UI-P3-003: Token control action two-step approval — [REQUIRES INTERNAL DECISION]
+UI-P3-004: Investor wallet submission method — [REQUIRES INTERNAL DECISION]
+UI-P3-005: Approved Wallet cardinality (carried from UI-P2-007) — [REQUIRES INTERNAL DECISION]
+UI-P3-006: Audit log access scope for CRO — [REQUIRES INTERNAL DECISION]
+UI-P3-007: Cross-border legal opinion — [REQUIRES CROSS-BORDER LEGAL INPUT]
+
+All 7 are non-blocking for downstream Phase 2 and Phase 3 drafting.
+UI-P3-001 (CLD-003) is the most impactful pending item — it affects which exact rows in the action matrix are CRO vs. PA at UNDER_REVIEW. The structural framework is correct and stable regardless of outcome.
+
+---
+
+ASSUMPTIONS USED
+---
+- The action matrix uses Platform Administrator as the default actor for all elevated operational actions where CLD-003 has not yet defined the CRO scope boundary. This is a conservative assumption: it does not grant CRO any permissions that are pending, but it also does not deny them. All such rows are tagged [P].
+
+- "Tenant-Level Operational User" (§9.5) is treated as a catch-all for Tenant staff who hold either PA or CRO role assignments. The question of whether a separate "Tenant Viewer" tier is needed is flagged as UI-P3-002 — it is not invented.
+
+- The Investor permission posture is drawn conservatively: minimal permissions, no state advancement beyond REQUESTED, no wallet self-approval. If investor self-service wallet submission is confirmed (UI-P3-004), the matrix row for "Submit wallet registration request" will need updating — this is flagged with a condition note in the matrix.
+
+- "PA may not approve their own wallet" appears in §13 (Prohibited Assumptions). This constraint is not derived from a specific locked decision; it is a standard separation-of-duties principle applied to the wallet approval workflow. It is included because the action matrix row for wallet approval shows PA as the default approver, which creates a risk of self-approval if not explicitly prohibited.

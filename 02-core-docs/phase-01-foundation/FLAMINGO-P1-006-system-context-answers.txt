@@ -1,0 +1,107 @@
+FLAMINGO-P1-006 System Context — Answers
+Last Updated: 2026-04-11 (initial draft)
+
+---
+
+SOURCE DOCUMENTS USED
+---
+- FLAMINGO-P1-002-locked-decisions-final.md (LD-001 through LD-043 — primary anchor)
+- FLAMINGO-P1-003-canonical-glossary-final.md (all term definitions)
+- FLAMINGO-P1-004-role-boundaries-final.md (role definitions for all actors)
+- FLAMINGO-P1-005-authority-model-final.md (authority type assignments)
+- FLAMINGO-P1-007-v1-scope-boundary-final.md (in-scope / out-of-scope classifications)
+- FLAMINGO-P1-008-source-of-truth-matrix-final.md (record authority assignments)
+- FLAMINGO-P1-009-canonical-transfer-lifecycle-final.md (8-state chain, completion boundaries)
+- 01-doc-operations/rules/CONTEXT-SYNC-NOTES.md (confirmed project facts: Base, ERC-3643, 506(c))
+
+---
+
+STRUCTURAL DECISIONS
+---
+- Departed from standard 14-section core doc template; used 18 sections tailored to a system context document
+  Rationale: standard sections (e.g., "State / Workflow / Controls") are not the right organizing principle for an ecosystem-level document; the content requires actor-by-actor and boundary-by-boundary structure
+- Five-layer ecosystem model used in Section 5: Legal / Platform / Blockchain / Investor-Participant / External Dependency
+  Rationale: cleanest way to show what Flamingo controls (Platform Layer) vs. what it depends on (all other layers)
+- Four primary boundary definitions in Section 8 (not just one): Platform/Legal, Platform/Blockchain, Platform/Issuer, Platform/Investor
+  Rationale: each boundary has distinct authority rules and conflict resolution; conflating them would obscure the architecture
+- "Record Truth at Each State" table (Section 10.2) added alongside the interaction flow
+  Rationale: shows exactly which system holds truth at each point in the lifecycle without requiring the reader to cross-reference P1-008
+
+---
+
+CONTEXT BOUNDARY DECISIONS
+---
+- Blockchain layer described as having two components: Base (the network) and ERC-3643 (the token standard)
+  Rationale: LD-035 (Base) and LD-036 (ERC-3643) are distinct locked decisions; they serve different functions (execution layer vs. compliance token standard) and should be named separately
+- KYC/AML vendor and accreditation provider listed as "pending" in the External Dependency Layer
+  Rationale: these are real dependencies for v1 investor intake, but the vendors are not yet selected (UI-008, UI-007 in P1-002); they must appear as ecosystem actors to avoid implying they do not exist
+- Operational Registry named as a distinct in-scope "actor/system" in Section 6
+  Rationale: it is a system component that requires its own boundary definition; it should not be folded into "Flamingo" without distinguishing the record layer from the workflow engine
+
+---
+
+WHITE-LABEL / TENANT DECISIONS
+---
+- White-label section (Section 13) structured as three sub-sections: what it is, what it does NOT change (explicit list), and the architecture model
+  Rationale: the "does not change" list is the most important content — it prevents the dangerous assumption that white-labeling changes Flamingo's legal role or lifecycle
+- Second Street Capital named as launch tenant by name
+  Rationale: they are the confirmed v1 tenant per project constraints; naming them makes the document concrete and consistent with P1-004
+- Multi-tenant architecture noted as present but full model deferred to Phase 2
+  Rationale: the architecture is an established fact (Flamingo is white-label / multi-tenant) but the configuration model detail is Phase 2 scope
+
+---
+
+COMPLETION BOUNDARY DECISIONS
+---
+- REDEEMED addressed in Section 12 explicitly (not buried in the prohibited assumptions table only)
+  Rationale: LD-042 is specific about this; the system context should name it where completion boundaries are defined, not just in a prohibitions list
+- TA_ACKNOWLEDGED given a named sub-section note: "not a completion boundary"
+  Rationale: this is the most dangerous near-miss in the completion layer — systems might treat TA acknowledgment as close enough to TA recording. Making it explicit at the system context level prevents the confusion from being baked into Phase 3 design.
+
+---
+
+EXTERNAL DEPENDENCIES INCLUDED
+---
+- Securitize (primary integration partner — legal completion dependency)
+- Base network (blockchain execution dependency)
+- ERC-3643 (token standard — smart contract dependency)
+- Issuer / SPV (offering structure dependency)
+- Legal Counsel (offering and exemption guidance dependency)
+- KYC/AML vendor (investor intake dependency — TBD)
+- Accreditation verification provider (investor eligibility dependency — TBD)
+- Second Street Capital (tenant deal-flow inputs dependency)
+- Cross-border legal counsel (Costa Rica operational context dependency)
+
+---
+
+ACTORS CONFIRMED AS OUT OF SCOPE FOR V1
+---
+- Broker-Dealer (LD-003, LD-033)
+- ATS (LD-004, LD-030, LD-033)
+- Custodian (LD-005, LD-033)
+- Secondary market participants (LD-030, LD-033)
+- Real-time settlement infrastructure (LD-030)
+
+---
+
+ASSUMPTIONS USED
+---
+- "Operational Registry" used throughout as the canonical Flamingo internal record-layer term, consistent with P1-003 Canonical Glossary definition
+- "Orchestration is not authority" used as the governing architectural principle, consistent with P1-004 and P1-005
+- Flamingo controls the smart contract configuration and deployment on Base, but does not control the Base network itself — this distinction is preserved in Section 6.9
+- The Costa Rica cross-border context is noted as a dependency (UI-P6-005) that must be resolved before investor-facing deployment, but does not block platform build
+- Items UI-003, UI-004 from P1-002 (authorized role matrix, reconciliation SLA) are not included as P6 unresolved items — they are tracked at the appropriate document level (P1-002, and future P2 docs). P6-level unresolved items are those that affect the system context ecosystem picture specifically.
+
+---
+
+UNRESOLVED ITEMS (P6-SPECIFIC)
+---
+UI-P6-001: Securitize integration specifics — [REQUIRES SECURITIZE CONFIRMATION]
+UI-P6-002: Reg D counsel engagement — [REQUIRES REG D COUNSEL INPUT]
+UI-P6-003: KYC/AML vendor — [REQUIRES INTERNAL DECISION]
+UI-P6-004: Accreditation provider — [REQUIRES INTERNAL DECISION]
+UI-P6-005: Costa Rica cross-border legal opinion — [REQUIRES CROSS-BORDER LEGAL INPUT]
+UI-P6-006: SPV formation process — [REQUIRES SECOND STREET INPUT]
+UI-P6-007: Second Street deal-flow inputs — [REQUIRES SECOND STREET INPUT]
+
+All 7 are non-blocking for Phase 1 completion and Phase 2 drafting initiation.

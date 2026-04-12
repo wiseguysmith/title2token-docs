@@ -1,0 +1,117 @@
+FLAMINGO-P2-012 Legal vs Operational Completion — Answers
+Last Updated: 2026-04-12 (initial draft)
+
+---
+
+SOURCE FILES USED
+---
+- 00-governance/LOCKED-DECISIONS.md (LD-009, LD-013, LD-015–LD-016, LD-018–LD-020, LD-025–LD-028, LD-042)
+- FLAMINGO-P1-005-authority-model-final.md (AP-001–AP-010; authority stack §5; authority matrix §8)
+- FLAMINGO-P1-008-source-of-truth-matrix-final.md (SOT assignments per system layer)
+- FLAMINGO-P1-009-canonical-transfer-lifecycle-final.md (8-state chain §5; lifecycle principles LP-001–LP-010 §6; state table §7; state-by-state definitions §8; evidence standards §9; completion-layer interpretation §10)
+- FLAMINGO-P2-001-platform-capabilities-and-non-capabilities-final.md (capability surface; non-capabilities table)
+- FLAMINGO-P2-002-user-and-actor-model-final.md (18 canonical actors; completion-sensitive actor authority)
+- FLAMINGO-P2-003-permission-model-final.md (PP-001–PP-010; lifecycle-sensitive permission rules §11; prohibited assumptions §13)
+
+---
+
+STRUCTURAL DECISIONS
+---
+- 15-section purpose-built structure; departed from standard 14-section core doc template.
+  Rationale: the completion model requires one section the standard template does not anticipate: §8 Completion State Interpretation Table, which is the dense cross-reference table covering all 8 states × 7 columns. This table is the primary operational reference for UI designers, engineers, and writers. It needed its own section rather than being embedded in a generic "State / Workflow / Controls" section. All other sections follow the standard structure closely.
+
+- Layered completion model framing (Layers 0–5 + REDEEMED parallel)
+  Rationale: numbering the completion layers (0 through 5) creates a natural vocabulary for downstream documents: "Layer 0 display rules," "Layer 4 evidence requirements." This is more precise than using state names alone, because multiple states share the same completion layer (REQUESTED, UNDER_REVIEW, APPROVED all map to Layer 0), and the numbers make the layering hierarchy visible. Layer 0 starts at zero deliberately — the first three canonical states represent NO completion, and naming that as a layer prevents the common error of treating APPROVED as a completion state.
+
+- ASCII diagram in §5 showing the completion layer model
+  Rationale: The completion model is spatial — later layers require earlier ones. A vertical diagram showing the six layers stacked, with the REDEEMED parallel noted at the bottom, makes the architecture immediately readable. This matches the approach used in P2-003 (3-layer permission model diagram) and P1-009 (lifecycle flow diagram).
+
+- Completion principles CP-001–CP-012 in §7
+  Rationale: The 12 principles are a product-layer translation of the authority principles (AP-001–AP-010) and lifecycle principles (LP-001–LP-010) from P1-005 and P1-009, filtered to completion-specific concerns. CP-001–CP-007 address the specific completion-collapse risks that motivated this document. CP-008–CP-010 restate the authority and SOT constraints in completion-model language. CP-011 and CP-012 add the operational display requirements (no unqualified language; conservative default).
+
+- Completion state interpretation table (§8) as the canonical cross-reference
+  Rationale: P1-009 §7 has a lifecycle state table with a Completion Layer column. P2-012 §8 is the expanded version of that column — it adds display language, authoritative source, and evidence requirements that P1-009 does not define. This is the table that UI designers, API documentation writers, and audit log designers will consult first. It must be accurate and complete.
+
+- §9 display rules structured as: general rules (D-001–D-005) → approved language table → prohibited language table → REDEEMED rules
+  Rationale: This ordering matches how a designer uses the section: first read the rules, then consult the approved language table, then check the prohibited list. Structuring REDEEMED as a separate subsection (§9.4) rather than in the main approved-language table prevents accidental conflation with the 8-state lifecycle display rules.
+
+- §11 completion-sensitive workflow rules structured to mirror §11 of P2-003
+  Rationale: P2-003 §11 defines who may act at each lifecycle state (permission lens). P2-012 §11 defines who may record or declare each completion layer (completion lens). The parallel structure allows downstream documents to cross-reference both sections simultaneously. §11.7 (who may NOT declare completion) is an explicit actor table — not a general prohibition — because the "who" question is the primary risk.
+
+---
+
+COMPLETION LAYER SELECTION
+---
+Six completion layers plus REDEEMED were used. This matches the task prompt recommendation and was validated against P1-009 §10, which defines 6 completion concepts. The specific design decisions:
+
+- Layer 0 covers three states (REQUESTED, UNDER_REVIEW, APPROVED) under a single "No Completion" label.
+  Rationale: All three share the same completion property: nothing has been executed, nothing has reached the TA, nothing is legally meaningful. Splitting them into three separate completion layers would suggest they have different completion significance — they do not. They differ in workflow status, not in completion status.
+
+- Layer 2 (Handoff Completion at TA_INSTRUCTION_SENT) is named "Handoff Completion" rather than "Instruction Delivery Completion."
+  Rationale: "Handoff" correctly captures that Flamingo's responsibility in initiating the TA interaction is complete. "Delivery" would overstate it — Flamingo cannot confirm TA receipt at this layer.
+
+- Layer 4 (TA_RECORDED) and Layer 5 (LEGALLY_COMPLETE) are separate layers.
+  Rationale: P1-009 §8 makes this explicit: "TA_RECORDED is not identical to LEGALLY_COMPLETE — recognition is a separate Flamingo step." In standard v1 operations, this recognition is near-instantaneous. But it is architecturally important that: (a) TA_RECORDED is the TA's legal act; (b) LEGALLY_COMPLETE is Flamingo's recognition of that act. These are distinct events. Keeping them as separate layers prevents any system logic from treating the TA recording signal as itself the terminal state.
+
+- REDEEMED is listed as "Parallel / Non-Equivalent Outcome" rather than as a completion layer.
+  Rationale: REDEEMED is not in the transfer lifecycle at all — it is a token operation. Including it as "Layer 6" would imply it is a downstream step from LEGALLY_COMPLETE, which is wrong. Listing it as a parallel/non-equivalent outcome makes its relationship to the transfer lifecycle explicit: it is a distinct category of event, not a completion layer at all.
+
+---
+
+DISPLAY LANGUAGE DECISIONS
+---
+- "Request submitted" (not "Transfer submitted") for REQUESTED state
+  Rationale: At REQUESTED, the investor has submitted a transfer request — the request has been received. Using "transfer submitted" could imply the transfer itself has been initiated. "Request submitted" is more accurate.
+
+- "Approved for execution" (not "Transfer approved") for APPROVED state
+  Rationale: "Transfer approved" would be ambiguous — does it mean the transfer has been approved for execution, or that the transfer has been approved in some legal sense? "Approved for execution" is precise: it names what APPROVED state actually means.
+
+- "Executed on-chain" (not "Transfer executed") for CHAIN_EXECUTED state
+  Rationale: "Transfer executed" without qualification would suggest the transfer is complete. "Executed on-chain" adds the qualifier that locates this event at the technical execution layer only.
+
+- "Transfer agent acknowledged receipt" (not "Transfer acknowledged") for TA_ACKNOWLEDGED state
+  Rationale: "Transfer acknowledged" is ambiguous — the TA acknowledged the transfer instruction, not the transfer itself. The full phrase specifies who acknowledged and what they acknowledged: the TA acknowledged receipt of the instruction.
+
+- "Legally complete" (not "Transfer complete") for LEGALLY_COMPLETE state
+  Rationale: Even at LEGALLY_COMPLETE, "transfer complete" is avoided. "Legally complete" specifies the completion layer explicitly and matches the canonical state name.
+
+---
+
+PROHIBITED ASSUMPTION SELECTION
+---
+12 prohibited assumptions were selected from:
+1. The five key completion-collapse risks: CHAIN_EXECUTED as final; TA_ACKNOWLEDGED as recorded; TA_RECORDED inferred from time; LEGALLY_COMPLETE before TA_RECORDED; human actor asserting LEGALLY_COMPLETE
+2. The APPROVED non-completion risk (most common non-technical stakeholder error)
+3. REDEEMED ≠ LEGALLY_COMPLETE (carried from LD-042; highest risk for product teams building redemption workflows)
+4. Operational Registry ≠ legal holder record (carried from AP-003; most common system architecture error)
+5. Blockchain transaction hash as legal completion proof (highest risk for technical teams)
+6. Unqualified "transfer complete" at any state
+7. TA_INSTRUCTION_SENT conflated with TA processing
+8. "Conservative" display at CHAIN_EXECUTED still being wrong (i.e., the risk that teams consider "executed" as a conservative label when it is actually incorrect if used to imply completion)
+
+---
+
+UNRESOLVED ITEMS
+---
+UI-P2-012-001: Reg D counsel review of LEGALLY_COMPLETE display rules — [REQUIRES REG D COUNSEL INPUT]
+UI-P2-012-002: Securitize TA_ACKNOWLEDGED signal semantics — [REQUIRES SECURITIZE CONFIRMATION]
+UI-P2-012-003: Securitize TA_RECORDED signal semantics — [REQUIRES SECURITIZE CONFIRMATION]
+UI-P2-012-004: Securitize SLA and error handling for TA states — [REQUIRES SECURITIZE CONFIRMATION]
+UI-P2-012-005: Edge-case completion conditions at TA_RECORDED to LEGALLY_COMPLETE path — [REQUIRES REG D COUNSEL INPUT] [REQUIRES CROSS-BORDER LEGAL INPUT]
+UI-P2-012-006: Costa Rica cross-border legal opinion — [REQUIRES CROSS-BORDER LEGAL INPUT]
+UI-P2-012-007: TA_RECORDED to LEGALLY_COMPLETE display gap decision — [REQUIRES INTERNAL DECISION]
+
+All 7 are non-blocking for Phase 2 and Phase 3 drafting.
+UI-P2-012-003 (TA_RECORDED signal semantics) is the most impactful for implementation — P3-006 and P3-004 cannot be finalized until this is confirmed.
+
+---
+
+ASSUMPTIONS USED
+---
+- TA_RECORDED → LEGALLY_COMPLETE is treated as a standard near-instantaneous recognition step in v1 operations. The completion model preserves them as architecturally separate (two distinct layers), but does not model a scenario where there is a meaningful operational gap between them in normal happy-path operations. Edge cases requiring additional conditions are flagged as UI-P2-012-005.
+
+- The REDEEMED state is described at the product level as a token operation / administrative outcome. Its exact lifecycle relationship (whether a REDEEMED token involves any TA recording step) is not modeled here — the only claim is that it is not LEGALLY_COMPLETE in the transfer-lifecycle sense. The LD-042 constraint is the sole anchor.
+
+- "Conservative completion display is required" (CP-012) is treated as an always-applicable rule, not as a fallback rule. This means that even in states where the platform has high confidence in the next-layer advancement (e.g., waiting for TA_ACKNOWLEDGED after TA_INSTRUCTION_SENT), the display remains at TA_INSTRUCTION_SENT until the signal is received. There is no "optimistic advancement" permitted.
+
+- The SOT hierarchy in §10.2 lists Blockchain / Base as authoritative for technical execution state. This is consistent with LD-037 and LD-041 (Base wins on transfer restriction enforcement). However, Base is explicitly not authoritative for legal completion or legal holder-of-record — only Securitize is.

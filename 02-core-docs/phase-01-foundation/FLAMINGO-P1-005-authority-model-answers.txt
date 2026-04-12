@@ -1,0 +1,83 @@
+FLAMINGO-P1-005 Authority Model — Answers
+Last Updated: 2026-04-11
+
+---
+
+SOURCE FILES USED
+---
+- 00-governance/LOCKED-DECISIONS.md (LD-001 through LD-034)
+- 02-core-docs/phase-01-foundation/FLAMINGO-P1-002-locked-decisions-final.md
+- 02-core-docs/phase-01-foundation/FLAMINGO-P1-004-role-boundaries-final.md
+- Project constraints provided by project owner (locked truths)
+
+---
+
+ASSUMPTIONS USED
+---
+- Authority is organized into six typed categories: legal, operational, technical, administrative,
+  review, and record. This taxonomy was selected to make the authority model precise and
+  implementation-actionable. No new authority types were invented.
+
+- "Record authority" is split into legal and operational because the distinction is structurally
+  critical: the TA holds legal record authority; Flamingo holds operational record authority.
+  These must never be described as equivalent.
+
+- The "three authority planes" framing (legal, operational, technical) was used to explain the
+  non-collapsibility of completion states in accessible terms.
+
+- The Compliance / Review Operator is treated as the sole holder of "review authority" within the
+  UNDER_REVIEW state. The Platform Administrator may have escalated review authority pending CLD-003.
+
+- Blockchain execution layer is treated as holding "technical authority" in the limited sense of
+  executing on-chain instructions. It holds no authority in the legal or operational sense.
+
+- Legal Counsel is included as an authority subject only to confirm it holds no platform authority.
+  Its advisory role is external and does not constitute platform or legal record authority.
+
+- Broker-dealer, ATS, and custodian are out of scope for v1 and receive no authority assignments.
+
+- Reconciliation authority is flagged as unresolved (UI-P5-004) because LD-017 locks the
+  discrepancy resolution rule (TA supersedes) but does not define who initiates reconciliation
+  or what the operational process is.
+
+---
+
+SELECTED AUTHORITY CATEGORIES
+---
+- Legal authority: binding power over securities, ownership, investor rights
+- Operational authority: power to act within Flamingo platform workflow
+- Technical authority: power to execute system-level actions (on-chain, API)
+- Administrative authority: power to configure and manage platform
+- Review authority: power to evaluate and approve/reject within a defined state
+- Record authority: power to write to an authoritative record (legal or operational)
+
+---
+
+SELECTED AUTHORITY PRINCIPLES
+---
+AP-001: Platform permission ≠ legal authority
+AP-002: Chain execution ≠ legal completion
+AP-003: Operational tracking ≠ legal recordation
+AP-004: Review approval ≠ TA-recorded completion
+AP-005: Legal holder-of-record authority is external to Flamingo
+AP-006: Flamingo cannot directly alter TA legal records
+AP-007: Blockchain execution carries no legal discretion
+AP-008: Authority does not transfer by proximity
+AP-009: Legal completion requires TA recordation
+AP-010: TA acknowledgment ≠ TA recordation
+
+---
+
+UNRESOLVED ITEMS
+---
+UI-P5-001: Role permission matrix — Compliance / Review Operator vs. Platform Administrator authority scope
+  — [REQUIRES SECOND STREET INPUT]
+
+UI-P5-002: TA mechanics at TA_INSTRUCTION_SENT, TA_ACKNOWLEDGED, TA_RECORDED (API, SLA, error handling)
+  — [REQUIRES SECURITIZE CONFIRMATION]
+
+UI-P5-003: Broker-dealer involvement and authority in any v1 offering
+  — [REQUIRES REG D COUNSEL INPUT]
+
+UI-P5-004: Reconciliation authority — who initiates and resolves operational/legal record discrepancies
+  — [REQUIRES SECURITIZE CONFIRMATION]

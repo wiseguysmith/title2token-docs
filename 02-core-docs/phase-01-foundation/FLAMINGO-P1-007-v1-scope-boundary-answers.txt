@@ -1,0 +1,97 @@
+FLAMINGO-P1-007 V1 Scope Boundary — Answers
+Last Updated: 2026-04-11
+
+---
+
+SOURCE FILES USED
+---
+- 00-governance/LOCKED-DECISIONS.md (LD-001 through LD-034, especially LD-029–LD-034)
+- 02-core-docs/phase-01-foundation/FLAMINGO-P1-002-locked-decisions-final.md
+- 02-core-docs/phase-01-foundation/FLAMINGO-P1-004-role-boundaries-final.md
+- 02-core-docs/phase-01-foundation/FLAMINGO-P1-005-authority-model-final.md
+- Project constraints provided by project owner (locked truths)
+- FLAMINGO-P1-006-system-context-final.md — shell only, no content available
+
+---
+
+ASSUMPTIONS USED
+---
+- P1-006 System Context was a shell with no content. Scope document was drafted without relying
+  on it. Any inconsistency must be resolved when P1-006 is drafted.
+
+- "v1 is conservative by design" is used as the governing scope philosophy. When in doubt,
+  scope is excluded, not included.
+
+- In-scope capabilities were derived from: the 8-state transfer chain (LD-021), the admin-reviewed
+  transfer requirement (LD-023, LD-029), the operational registry model (LD-015), and the
+  blockchain usage model (LD-018).
+
+- Out-of-scope items were derived from: identity locks (LD-001–LD-007) and v1 operating model
+  locks (LD-029–LD-034).
+
+- "Deferred" items are planning artifacts only — no commitment implied. They are listed because
+  omitting them creates a vacuum that invites scope confusion.
+
+- Investor accreditation verification is treated as external but adjacent (performed by issuer /
+  counsel / third-party verifier). Flamingo may store accreditation data as an operational record.
+  If a third-party verifier is integrated, a scope addendum is required (UI-P7-005).
+
+- The "governing constraint" framing — any function that would make Flamingo a regulated substitute
+  for another actor is out of scope — is used consistently because it gives a decision rule, not
+  just a list.
+
+---
+
+SELECTED SCOPE INCLUSIONS
+---
+- Offering setup and onboarding support (admin-configured)
+- Operational workflow orchestration (8-state chain)
+- Compliance-aware review support (manual, tooling only)
+- Admin-reviewed transfer handling (all v1 transfers)
+- Operational registry maintenance (not legal books and records)
+- Blockchain token representation and transfer restriction support
+- Event logging and audit trail support
+- TA instruction handoff and status tracking
+- Reconciliation support (detection and flagging; resolution per LD-017)
+
+---
+
+SELECTED SCOPE EXCLUSIONS
+---
+- Issuer substitution / SPV structuring
+- Legal advice or legal opinion
+- TA legal recordkeeping or direct record mutation
+- Broker-dealer functions
+- ATS / secondary market
+- Custody
+- Self-serve investor transfer finalization
+- Automated compliance screening
+- Asserting legal finality from chain execution alone
+- Real-time settlement
+- Investor-facing trading UI
+- Cross-border / multi-jurisdiction compliance logic
+
+---
+
+DEFERRED ITEMS
+---
+- Automated compliance screening
+- Self-service investor transfer initiation
+- Secondary market / ATS integration
+- Real-time settlement
+- Custodian integration
+- Broker-dealer workflow integration
+- Automated TA reconciliation
+- Investor-facing transfer portal with direct execution
+- Cross-border multi-jurisdiction support
+- Expanded offering types beyond Reg D private placements
+
+---
+
+UNRESOLVED ITEMS
+---
+UI-P7-001: Broker-dealer involvement in any v1 offering — [REQUIRES REG D COUNSEL INPUT]
+UI-P7-002: Custodian involvement in any v1 offering — [REQUIRES INTERNAL DECISION]
+UI-P7-003: TA instruction and recording mechanics — [REQUIRES SECURITIZE CONFIRMATION]
+UI-P7-004: Internal role permission matrix — [REQUIRES INTERNAL DECISION]
+UI-P7-005: Third-party accreditation verifier integration — [REQUIRES INTERNAL DECISION]

@@ -1,0 +1,70 @@
+FLAMINGO-P1-004 Role Boundaries — Answers
+Last Updated: 2026-04-11
+
+---
+
+SOURCE FILES USED
+---
+- 00-governance/LOCKED-DECISIONS.md (primary — LD-001 through LD-034)
+- 02-core-docs/phase-01-foundation/FLAMINGO-P1-002-locked-decisions-final.md
+- Project constraints provided by project owner (locked truths)
+
+---
+
+ASSUMPTIONS USED
+---
+- "Compliance / Review Operator" is treated as a distinct platform role from "Platform Administrator"
+  because they perform different functions at different states (UNDER_REVIEW vs. general admin).
+  Role permission specifics are conditionally locked (CLD-003).
+
+- Broker-dealer is listed as out-of-scope for v1 but included by name to prevent confusion and
+  document the boundary explicitly. Its possible presence in specific offerings is noted as an
+  unresolved item requiring legal counsel input.
+
+- Custodian is listed as out-of-scope for v1. No custodian integration is assumed.
+
+- ATS is listed as out-of-scope for v1. No ATS integration is assumed.
+
+- "Legal Counsel" is treated as a role boundary item (advisory only, external) even though it is
+  not a Flamingo platform role, because the document must make clear Flamingo is not counsel.
+
+- "External Vendor / Integration Partner" is included as a generic category. The transfer agent
+  is the primary v1 external integration. No other specific vendor is named.
+
+- The blockchain execution layer is treated as a technical execution component without autonomous
+  authority — it acts on platform instruction only.
+
+- "Orchestration is not authority" is the guiding principle for all Flamingo boundary framing.
+
+---
+
+SELECTED ROLE DEFINITIONS
+---
+- Flamingo: platform operator — no legal authority, full operational authority within the platform
+- Issuer: deal-specific SPV / fund vehicle — issues the security, not Flamingo
+- Investor: holder of security interest in SPV — limited to request submission
+- Transfer Agent (Securitize): legal holder of record — books-and-records authority
+- Compliance / Review Operator: manual review role — advances UNDER_REVIEW state, no legal authority
+- Platform Administrator: operational admin — no legal authority
+- Blockchain execution layer: technical tool — executes instructions, no legal discretion
+- Legal Counsel: external advisory — not a platform role
+- Broker-Dealer: out of scope v1
+- ATS: out of scope v1
+- Custodian: out of scope v1
+- External Vendor: integration boundary only
+
+---
+
+UNRESOLVED ITEMS
+---
+UI-P4-001: Final role permission matrix (Compliance Operator vs. Platform Administrator)
+  — [REQUIRES SECOND STREET INPUT]
+
+UI-P4-002: Whether a broker-dealer is engaged in any v1 offering and boundary implications
+  — [REQUIRES REG D COUNSEL INPUT]
+
+UI-P4-003: TA integration boundary specifics at TA_INSTRUCTION_SENT and TA_ACKNOWLEDGED
+  — [REQUIRES SECURITIZE CONFIRMATION]
+
+UI-P4-004: Whether a custodian is engaged for any v1 offering
+  — [REQUIRES SECOND STREET INPUT]

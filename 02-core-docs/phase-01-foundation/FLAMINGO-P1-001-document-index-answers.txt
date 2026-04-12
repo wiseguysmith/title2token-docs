@@ -1,0 +1,93 @@
+FLAMINGO-P1-001 Document Index — Answers
+Last Updated: 2026-04-11 (initial draft)
+
+---
+
+SOURCE FILES USED
+---
+- 00-governance/STATUS-BOARD.md (current status of all 44 documents)
+- 01-doc-operations/rules/NAMING-CONVENTION.md (naming rules; workpack pattern)
+- 02-core-docs/phase-01-foundation/ (all 12 Phase 1 documents — actual files enumerated)
+- 00-governance/ (governance anchor files — 5 populated, 5 placeholders at time of writing)
+- Glob enumeration of 02-core-docs/phase-02-product-controls/ and phase-03-system-services/ to confirm file state
+
+---
+
+STRUCTURAL DECISIONS
+---
+- Departed from standard 14-section core doc template; used a 15-section navigation-focused structure
+  Rationale: a document index is a map, not a policy or process document; sections like "State/Workflow/Controls" and "Rules and Constraints" do not apply; the index needs sections for each folder tier and audience-specific reading paths
+
+- ASCII directory tree used in Section 4 (Repo Root Structure)
+  Rationale: most compact representation of folder hierarchy; readable without tooling; easier to scan than a table
+
+- Phase 1 index uses a full 5-column table (ID / Title / File / Status / Purpose)
+  Rationale: Phase 1 documents are DRAFTED — enough detail exists to describe each with a one-line purpose; the fuller table format serves the "new contributor" reading path
+
+- Phase 2 and Phase 3 indexes use a 4-column table (ID / Title / Status / Purpose + gating note)
+  Rationale: these are SHELL CREATED; there is no file-name ambiguity; keeping the table narrower avoids listing 32 near-identical filenames
+
+- Workpack pattern described in Section 9 (Operational Support Files) rather than inline in Phase tables
+  Rationale: the pattern is the same for all documents; documenting it once avoids 44 rows of repetition; the 5-file structure is already the naming convention
+
+- 5 reading paths provided (New Contributor / Reviewer / Implementation Planner / Phase 2 Drafter / Quick Orientation for Claude Code restart)
+  Rationale: Claude Code restart path is unusual for a document index but is highly practical for this project; the repo is large enough that a cold-start context reload benefits from a prescribed reading order
+
+---
+
+REPO STATE AT TIME OF WRITING (2026-04-11)
+---
+Phase 1 documents: 12 — all DRAFTED
+Phase 2 documents: 16 — all SHELL CREATED
+Phase 3 documents: 16 — all SHELL CREATED
+Total core documents: 44
+
+Governance anchor files:
+- LOCKED-DECISIONS.md — POPULATED (LD-001 through LD-043)
+- CANONICAL-GLOSSARY.md — POPULATED (summary of P1-003)
+- REVIEW-CHECKLIST.md — POPULATED (summary of P1-011)
+- SOURCE-OF-TRUTH-MATRIX.md — POPULATED (summary of P1-008)
+- AUTHORITY-MODEL.md — POPULATED (summary of P1-005)
+- STATUS-BOARD.md — MAINTAINED (ongoing)
+- DOC-INDEX.md — PLACEHOLDER (updated alongside this workpack)
+- ASSUMPTIONS-AND-UNKNOWNS-POLICY.md — PLACEHOLDER
+- DEPENDENCY-MAP.md — PLACEHOLDER
+- CHANGE-CONTROL.md — PLACEHOLDER
+
+---
+
+READING PATH RATIONALE
+---
+New Contributor path: starts with STATUS-BOARD (what exists), then P1-001 (this document), then P1-003 (Glossary — vocabulary), then P1-004/P1-005 (roles and authority), then P1-002 (locked decisions) before reading any design documents
+Reviewer path: starts with P1-011 (Review Checklist), then P1-002 (locked decisions as the Tier 1 reference), then the target document's workpack
+Implementation Planner path: P1-007 (Scope Boundary) → P1-006 (System Context) → P1-009 (Lifecycle) → P1-008 (Source of Truth) → P1-012 (Dependency Map)
+Phase 2 Drafter path: P1-011 (gate) → P1-003 (Glossary) → P1-005 (Authority) → P1-009 (Lifecycle) → target Phase 2 document shell
+Claude Code Restart path: STATUS-BOARD → P1-002 (locked decisions) → P1-003 (glossary) → P1-009 (lifecycle) → the specific document being worked on
+
+---
+
+SEQUENCING DECISIONS
+---
+- Phase 2 drafting prerequisite is "all Phase 1 documents DRAFTED" — this condition is now met (2026-04-11)
+- External confirmation gates (Securitize, Reg D counsel) do not block Phase 2 drafting but do block Phase 2 APPROVED status
+- P3-006 (TA Integration Service) and P3-012 (Reconciliation Engine) are [REQUIRES SECURITIZE CONFIRMATION] at content stage — these are noted in the Phase 3 index
+- P1-005 and P1-008 have pending revisions (LD-040/041 precedence rules into P1-005; Base named explicitly in P1-008) — these are in the revision queue, non-blocking
+
+---
+
+UNRESOLVED ITEMS
+---
+UI-001-001: Machine-readable index format (JSON/YAML) — [REQUIRES INTERNAL DECISION]
+UI-001-002: 03-companion-docs placeholder population — [REQUIRES INTERNAL DECISION]
+UI-001-003: Document index versioning policy vs. STATUS-BOARD — [REQUIRES INTERNAL DECISION]
+
+All 3 are non-blocking for Phase 2 drafting.
+
+---
+
+ASSUMPTIONS USED
+---
+- The document index describes the repo at a point in time; it will drift from reality as documents are added or statuses change. The "Last Updated" date in the header is the reader's signal that a refresh may be needed.
+- The index does not track workpack file statuses individually (prompt/answers/review/open-items) — only the main document status. Workpack completeness is implied by the main document being DRAFTED.
+- 03-companion-docs/ subfolders exist as empty folders; they are listed in the repo tree but not indexed individually since no files have been placed in them yet.
+- 04-claude-handoff/, 05-visuals/, 06-archive/ are listed in the repo tree but not indexed — no files placed yet.

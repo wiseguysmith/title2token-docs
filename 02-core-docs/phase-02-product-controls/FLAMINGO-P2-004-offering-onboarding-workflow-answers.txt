@@ -1,0 +1,99 @@
+FLAMINGO-P2-004 Offering Onboarding Workflow — Answers
+Last Updated: 2026-04-12 (initial draft)
+
+---
+
+SOURCE FILES USED
+---
+- 00-governance/LOCKED-DECISIONS.md (LD-001–LD-007, LD-010, LD-013, LD-015, LD-016, LD-035, LD-036, LD-038, LD-039, LD-040, LD-041, LD-043)
+- FLAMINGO-P1-004-role-boundaries-final.md (Platform Administrator authority scope)
+- FLAMINGO-P1-005-authority-model-final.md (AP-001–AP-010; no legal authority for Flamingo)
+- FLAMINGO-P1-006-system-context-final.md (tenant/issuer/Flamingo boundary; white-label constraint)
+- FLAMINGO-P1-007-v1-scope-boundary-final.md (v1 offering scope; what is in/out of scope)
+- FLAMINGO-P1-008-source-of-truth-matrix-final.md (offering configuration as operational record; legal documents as external)
+- FLAMINGO-P1-010-assumptions-and-unknowns-policy-final.md (conservative handling; no guessing legal specifics)
+- FLAMINGO-P2-001-platform-capabilities-and-non-capabilities-final.md (§8.1 issuer/tenant onboarding as Support Capability; §9.2 offering parameter configuration; §11 SPV formation as external/adjacent)
+- FLAMINGO-P2-002-user-and-actor-model-final.md (Tenant §9.11; Issuer Vehicle §9.10; Platform Administrator §9.3)
+- FLAMINGO-P2-003-permission-model-final.md (PA approval authority; CLD-003 pending role matrix)
+- FLAMINGO-P2-005-investor-intake-and-eligibility-boundary-final.md (ES-004 readiness gate; offering OS-005 as prerequisite for investor participation)
+- FLAMINGO-P2-008-transfer-request-and-review-control-final.md (§6.4 validity preconditions include offering active)
+- FLAMINGO-P2-009-admin-reviewed-transfer-policy-final.md (§9.3 transfer restriction review criteria sourced from offering compliance configuration)
+
+---
+
+STRUCTURAL DECISIONS
+---
+- 16-section structure with OB-001–OB-010 principle codes and OS-001–OS-006 stage codes.
+  Rationale: the principle-code pattern is consistent with all prior Phase 2 documents (IE-001–IE-010 in P2-005; RP-001–RP-010 in P2-009; CP-001–CP-012 in P2-012; etc.). OB codes provide citable anchors for downstream documents (P2-006, P2-007, P2-009) and system design (P3-005). OS codes define a clear stage model analogous to ES-001–ES-006 in P2-005 — both documents define operational readiness in parallel tracks (offering readiness and investor readiness).
+
+- Seven core onboarding objects.
+  Rationale: the object model is the foundation for Phase 3 data model design. Defining the objects at the product/control layer (P2-004) — even if only at reference level for some (e.g., token configuration reference) — ensures that Phase 3 has a clear product-layer specification to implement. Collapsing all objects into "offering record" would force P2-006, P2-007, and P2-011 to re-define the object scope, creating duplication and risk of inconsistency.
+
+---
+
+GATED WORKFLOW MODEL DECISIONS
+---
+- Six-stage gating model (OS-001–OS-006) rather than a simple binary (onboarded / not onboarded).
+  Rationale: offering onboarding involves multiple distinct conditions that must be satisfied in a defined order: intake fields complete → external dependencies confirmed → internal approvals granted → operational readiness. A binary model does not distinguish between an offering that is still gathering external inputs and one that has external inputs confirmed but is awaiting internal review. These are meaningfully different operational states — they have different admin queue implications, different risk profiles, and different downstream implications. The stage model provides the granularity needed for P2-016 (Operator Console Controls) and P3-005 (Transfer Orchestration Service).
+
+- OS-003 (External Dependencies Pending) as a named stage, not a background assumption.
+  Rationale: the most common failure mode in platform onboarding design is treating external dependencies as passive prerequisites that are assumed to be satisfied. Making OS-003 an explicit named stage forces external dependencies to be visibly tracked and confirmed — they cannot be silently assumed. This is consistent with OB-004 (external dependencies tracked as named inputs) and P1-010 (conservative handling).
+
+---
+
+TWO INTERNAL APPROVAL GATE DECISIONS
+---
+- Two separate gates (offering creation approval + compliance configuration approval) rather than a single gate.
+  Rationale: offering creation approval and compliance configuration approval are meaningfully different decisions. Offering creation approval confirms that the offering record is complete, the issuer vehicle reference is valid, and the configuration is structurally acceptable. Compliance configuration approval confirms that the eligibility criteria, KYC/AML requirement, transfer restriction parameters, and accreditation requirement are captured and acceptable for operational use. These may be performed by different roles (pending CLD-003) and may occur at different times. Collapsing them into a single approval gate would either force compliance configuration to block offering creation, or allow compliance configuration to be passed without review, neither of which is acceptable.
+
+- Both approval gates are explicitly operational, not legal.
+  Rationale: OB-002 and §10.2 are explicit that internal approval does not constitute legal review or regulatory compliance certification. This mirrors the "what approval does NOT assert" pattern from P2-009 §9.6 (what review approval does NOT assert) and P2-012 (completion boundary alignment). The prohibited assumption #2 in §13 (internal approval = legal issuance readiness) is the direct enforcement of this design decision.
+
+---
+
+EXTERNAL DEPENDENCY TRACKING DECISIONS
+---
+- SPV formation, Securitize TA setup, legal opinion availability, and accreditation/KYC vendor setup are all tracked as named external dependencies with visible status.
+  Rationale: P2-001 §11 lists SPV formation and TA legal recording as "External but Adjacent Functions." P2-004 is the workflow document that operationalizes how those external functions are tracked during onboarding. If these dependencies were left implicit, the platform would have no mechanism to distinguish an offering that is blocked by an unconfirmed SPV from one that is blocked by an unconfirmed Securitize setup. Named dependency tracking is necessary for operational queue management (P2-016) and for compliance audit purposes (P2-013).
+
+- Securitize TA setup as a dependency separate from Flamingo OS-005.
+  Rationale: OB-010 explicitly separates offering operational readiness (Flamingo platform state) from Securitize TA setup completion (external TA state). An offering can reach OS-005 before Securitize has completed its own setup — which means TA-dependent workflow steps (TA_INSTRUCTION_SENT through TA_RECORDED) are not yet available. Making this separation explicit prevents the dangerous assumption that Flamingo OS-005 = TA ready. This distinction is architecturally critical for P3-006 (TA Integration Service) design.
+
+---
+
+TOKEN CONFIGURATION REFERENCE DECISIONS
+---
+- Token configuration reference captured at onboarding (product-level) without duplicating P2-007 logic.
+  Rationale: the offering onboarding object model must reference token configuration to be usable as the upstream input for P2-007 (Token Representation Model) and P3-005 (Transfer Orchestration Service). Capturing the reference at onboarding — symbol, standard, chain, smart contract status — provides the link without pre-empting P2-007's detailed token representation logic. The phrase "token configuration reference" rather than "token record" signals that P2-004 captures the pointer, not the full model.
+
+---
+
+CONSERVATIVE HANDLING DECISIONS
+---
+- Transfer restriction parameters tracked as pending Reg D counsel input in compliance configuration.
+  Rationale: P2-009 §9.3 established that specific Reg D 506(c) transfer restriction conditions and holding periods have not been confirmed by counsel. P2-004 §9.3 inherits this — the compliance configuration table flags transfer restriction and holding period parameters as [REQUIRES REG D COUNSEL INPUT]. This is the same item as P2-009 UI-P2-009-001 and P2-004 UI-P2-004-004 — one Reg D counsel engagement resolves all three.
+
+---
+
+UNRESOLVED ITEMS
+---
+UI-P2-004-001: Internal approval role matrix — [REQUIRES SECOND STREET INPUT] (CLD-003)
+UI-P2-004-002: Accreditation provider per-offering setup — [REQUIRES INTERNAL DECISION]
+UI-P2-004-003: KYC/AML vendor per-offering setup — [REQUIRES VENDOR SELECTION]
+UI-P2-004-004: Transfer restriction and holding period parameters — [REQUIRES REG D COUNSEL INPUT] — shared with P2-009 UI-P2-009-001
+UI-P2-004-005: Securitize TA offering setup mechanism — [REQUIRES SECURITIZE CONFIRMATION]
+UI-P2-004-006: SPV formation process and confirmation mechanism — [REQUIRES SECOND STREET INPUT]
+UI-P2-004-007: Offering-specific eligibility conditions and permitted transferee class — [REQUIRES SECOND STREET INPUT]
+UI-P2-004-008: Cross-border legal dependency scope — [REQUIRES CROSS-BORDER LEGAL INPUT]
+
+All 8 non-blocking. UI-P2-004-004 (transfer restriction parameters) is the most impactful content gap — it feeds directly into P2-009 §9.3 review criteria. UI-P2-004-005 (Securitize TA setup mechanism) is the most impactful for P3-006 design.
+
+---
+
+ASSUMPTIONS USED
+---
+- The six-stage model (OS-001–OS-006) is structurally parallel to the six-state eligibility model in P2-005 (ES-001–ES-006). This creates a consistent pattern: both offering onboarding and investor intake use numbered state codes with conservative gating and a separate "blocked" state. This makes it easier for downstream system designers to reason about two interdependent readiness tracks without confusion.
+
+- The downstream readiness gate table in §12.1 explicitly references the corresponding investor readiness condition (ES-004) alongside offering readiness (OS-005). The combined requirement — offering OS-005 AND investor ES-004 — is the precondition for transfer request submission. Neither track alone is sufficient. This mirrors the three-track model in P2-005 (accreditation + KYC/AML + wallet).
+
+- Offering lifecycle management (Active/Inactive/Suspended/Closed) is introduced in §12.3 as a concept distinct from onboarding stage. The onboarding stages (OS-001–OS-006) cover the path to OS-005; post-OS-005 operational status management is a separate concern that will be governed by the role permission matrix (CLD-003). This separation prevents the onboarding stage model from being conflated with the ongoing offering management lifecycle.

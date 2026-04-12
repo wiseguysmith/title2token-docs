@@ -1,0 +1,94 @@
+FLAMINGO-P1-003 Canonical Glossary — Answers
+Last Updated: 2026-04-11 (initial draft)
+
+---
+
+SOURCE DOCUMENTS USED
+---
+- FLAMINGO-P1-002-locked-decisions-final.md (primary anchor — LD-001 through LD-043)
+- FLAMINGO-P1-004-role-boundaries-final.md (role terms)
+- FLAMINGO-P1-005-authority-model-final.md (authority terms)
+- FLAMINGO-P1-008-source-of-truth-matrix-final.md (SOT terms)
+- FLAMINGO-P1-009-canonical-transfer-lifecycle-final.md (lifecycle terms)
+- FLAMINGO-P1-010-assumptions-and-unknowns-policy-final.md (certainty terms)
+- FLAMINGO-P1-012-dependency-map-final.md (dependency terms)
+- 01-doc-operations/rules/CONTEXT-SYNC-NOTES.md (confirmed project facts: Base, ERC-3643, 506(c))
+
+---
+
+STRUCTURAL DECISIONS
+---
+- Used standard 14-section core doc template; renaming sections to match glossary content (e.g., Section 5 = "Term Categories" instead of "System/Process/Policy Statement")
+- Term categories numbered 6.1 through 6.8 within Section 6 for easy cross-reference
+- Term Index in Appendix (Section 13) is alphabetically sorted with section references
+- Prohibited terminology in Section 7 (not embedded in term definitions) to create a single authoritative list
+- External confirmation dependencies in Section 8 as a table separate from the term definitions — keeps definitions clean while flagging what is pending
+
+---
+
+TERM COUNT
+---
+- Category 6.1 (Platform Identity): 7 terms
+- Category 6.2 (Issuer/Offering/Investor): 11 terms
+- Category 6.3 (TA/Registry): 7 terms
+- Category 6.4 (Blockchain/Token): 11 terms
+- Category 6.5 (Lifecycle/Completion): 16 terms (8 states + 8 lifecycle/completion terms)
+- Category 6.6 (Control/Review/Reconciliation): 7 terms
+- Category 6.7 (Documentation/Certainty): 8 terms
+- Category 6.8 (White-Label/Tenancy): 2 terms
+Total: 69 terms defined
+
+---
+
+KEY TERM DECISIONS
+---
+
+"Operational Registry" vs "Flamingo database":
+Decision: "Operational Registry" is the canonical term. "Flamingo operational database" is acceptable shorthand in internal technical contexts only. The note is included in the Operational Registry definition itself to prevent drift.
+
+"TA-Acknowledged Completion":
+Decision: This is explicitly NOT a recognized completion boundary. The definition states this clearly. This prevents any implementation team from treating TA_ACKNOWLEDGED as a completion state.
+
+"REDEEMED":
+Decision: Defined as a token redemption event that is explicitly not equivalent to LEGALLY_COMPLETE. LD-042 is cited. The definition does not describe REDEEMED as a lifecycle state (because it is not one of the 8 canonical states) — it describes what it is and what it is not.
+
+"Compliance and Review Operator":
+Decision: Defined as a secondary designation for the Flamingo role in transfer review context. Clearly scoped to operational function only — not legal compliance responsibility.
+
+"Forced Transfer":
+Decision: Defined as subject to the same admin-review and lifecycle requirements as voluntary transfers. This prevents any implementation assumption that forced transfers bypass the 8-state chain.
+
+Resolution-Owner Tags:
+Decision: All 5 canonical tags are listed under the "Resolution-Owner Tag" term definition. This makes the glossary the single authoritative source for which tags are valid.
+
+---
+
+ASSUMPTIONS USED
+---
+- "Legal boundary" framing: definitions that touch legal questions are framed as how Flamingo uses the term operationally, not as legal opinions. This is consistent with P1-002 approach.
+- "Securitize" is named in the Transfer Agent and Legal Holder of Record definitions because it is the designated TA for v1 per project constraints. This is structural, not an endorsement.
+- "Second Street Capital" is named as the Launch Tenant because it is the designated v1 tenant per project constraints.
+- "Multi-Tenant Architecture" is defined at the structural level only — the full tenant isolation model is Phase 2 scope (P2-002, P2-003).
+- KYC and AML are defined structurally (what they are, that they are offchain) without specifying vendor, since vendor is open (UI-008).
+
+---
+
+PROHIBITED TERM DECISIONS
+---
+13 prohibited terms defined. Key rationale for non-obvious ones:
+- "Flamingo's records" without "operational": omission of "operational" qualifier implies legal authority Flamingo does not hold. Even in internal technical documents, the qualifier should be present in any context where legal authority is in scope.
+- "Transfer is complete" without state qualifier: ambiguity is the problem — this phrase could mean any of 3 different completion boundaries. Prohibited to force precision.
+- "Securitize confirms the transfer": dangerous because TA_ACKNOWLEDGED (acknowledgment) is not TA_RECORDED (recording). The prohibited entry targets the specific misuse — using "confirms" when meaning "acknowledged receipt," not "recorded in books."
+- "Blockchain confirms the transfer": same completion boundary confusion — on-chain execution is technical completion only.
+
+---
+
+OPEN ITEMS (GLOSSARY-SPECIFIC)
+---
+UI-G-001: Securitize API state naming — [REQUIRES SECURITIZE CONFIRMATION]
+UI-G-002: Authorized role names — [REQUIRES SECOND STREET INPUT]
+UI-G-003: Tenant terminology preference — [REQUIRES SECOND STREET INPUT]
+UI-G-004: Accreditation verification term — [REQUIRES INTERNAL DECISION]
+UI-G-005: Cross-border scope terms — [REQUIRES CROSS-BORDER LEGAL INPUT]
+
+All 5 are non-blocking for current Phase 1 documentation.

@@ -1,0 +1,80 @@
+FLAMINGO-P1-002 Locked Decisions — Answers
+Last Updated: 2026-04-11 (context sync — 9 new LDs; CLD-002 promoted; UI-002 closed)
+
+---
+
+SOURCE ANSWERS USED
+---
+- Locked truths provided by project owner as fixed constraints
+- Canonical 8-state transfer chain:
+  REQUESTED → UNDER_REVIEW → APPROVED → CHAIN_EXECUTED → TA_INSTRUCTION_SENT → TA_ACKNOWLEDGED → TA_RECORDED → LEGALLY_COMPLETE
+- Securitize named as transfer agent and legal holder of record (project constraint)
+- SPV / fund vehicle named as the issuer model per offering (project constraint)
+- v1 = admin-reviewed transfers only (project constraint)
+- Flamingo role = platform operator only (project constraint)
+- Blockchain = representational and administrative tool, not legal books and records (project constraint)
+
+---
+
+SELECTED OPTIONS
+---
+- Decision format: tabular with ID, decision text, and LOCKED / CONDITIONALLY LOCKED status
+- 9 locked categories + 1 conditionally locked section, matching required structure
+- Change control: project owner approval required; legal counsel additionally required for regulated items
+- Vendor naming: minimal, structural references only
+- Completion boundaries: represented as distinct states with distinct triggers in all outputs
+
+---
+
+ASSUMPTIONS USED
+---
+- "Flamingo's registry is operational only" is interpreted to mean it holds no legal authority under applicable securities law
+- "Blockchain is used for representation and logging" excludes blockchain from books-and-records authority
+- "Admin-reviewed" means a Flamingo platform admin performs a manual review step at UNDER_REVIEW state
+- "Legal counsel" in change control refers to external Reg D / securities counsel, not internal staff
+- "Authorized platform event" for state transitions is defined as any event triggered by an authorized admin action within the platform — specific role matrix is conditionally locked (CLD-003)
+- Securitize is named as the transfer agent because it is the designated TA for v1 per project constraints; this is structural, not an endorsement
+
+---
+
+CONTEXT SYNC ADDITIONS (2026-04-11)
+---
+The following confirmed facts were added as new locked decisions in this update session:
+
+- LD-035: Chain = Base (confirmed by project owner)
+- LD-036: Token standard = ERC-3643 (confirmed by project owner)
+- LD-037: Base is authoritative for token balances, allowlist, transfer restrictions, contract pause
+- LD-038: Sensitive personal/compliance data stays offchain only (confirmed architectural constraint)
+- LD-039: No unrestricted P2P transfers (confirmed — all transfers platform-executed and admin-reviewed)
+- LD-040: Securitize wins on legal holder conflicts (explicit conflict-resolution rule)
+- LD-041: Base wins on transfer restriction enforcement conflicts (explicit conflict-resolution rule)
+- LD-042: REDEEMED ≠ LEGALLY_COMPLETE (clarification for completion boundary discipline)
+- LD-043: Reg D Rule 506(c), accredited investors only (promoted from CLD-002; confirmed by project owner)
+
+CLD-002 promoted to LD-043. UI-002 closed. No other existing locked decisions were modified.
+
+The 9 new locked decisions are additive. They do not modify or qualify any of LD-001 through LD-034.
+
+OPEN ITEMS NOTE
+---
+Additional unresolved items were added to the open-items file during the context sync pass:
+UI-005: Costa Rica cross-border legal opinion
+UI-006: 506(c) transfer restriction / holding period specifics
+UI-007: Accreditation verification provider
+UI-008: KYC/AML vendor selection
+UI-009: SPV formation process
+UI-010: Second Street deal-flow inputs
+These remain non-blocking for v1 foundation. See open-items file for full detail.
+
+UNRESOLVED ITEMS (CURRENT)
+---
+UI-001: Securitize API specifics at TA_INSTRUCTION_SENT and TA_ACKNOWLEDGED — [REQUIRES SECURITIZE CONFIRMATION]
+UI-002: RESOLVED — confirmed 506(c); promoted to LD-043
+UI-003: Authorized role matrix for state transition triggers — [REQUIRES SECOND STREET INPUT]
+UI-004: Reconciliation SLA and process between Flamingo registry and Securitize records — [REQUIRES SECURITIZE CONFIRMATION]
+UI-005: Costa Rica cross-border legal opinion — [REQUIRES REG D COUNSEL INPUT]
+UI-006: 506(c) transfer restriction / holding period specifics — [REQUIRES REG D COUNSEL INPUT]
+UI-007: Accreditation verification provider — [REQUIRES INTERNAL DECISION]
+UI-008: KYC/AML vendor selection — [REQUIRES INTERNAL DECISION]
+UI-009: SPV formation process — [REQUIRES SECOND STREET INPUT]
+UI-010: Second Street deal-flow inputs — [REQUIRES SECOND STREET INPUT]

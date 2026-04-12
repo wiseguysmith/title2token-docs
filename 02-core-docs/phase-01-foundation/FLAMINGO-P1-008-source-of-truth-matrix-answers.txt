@@ -1,0 +1,98 @@
+FLAMINGO-P1-008 Source of Truth Matrix — Answers
+Last Updated: 2026-04-11
+
+---
+
+SOURCE FILES USED
+---
+- 00-governance/LOCKED-DECISIONS.md (LD-013–LD-020 as primary anchors; LD-001–LD-034 in full)
+- 02-core-docs/phase-01-foundation/FLAMINGO-P1-002-locked-decisions-final.md
+- 02-core-docs/phase-01-foundation/FLAMINGO-P1-004-role-boundaries-final.md
+- 02-core-docs/phase-01-foundation/FLAMINGO-P1-005-authority-model-final.md
+- 02-core-docs/phase-01-foundation/FLAMINGO-P1-007-v1-scope-boundary-final.md
+- Project constraints provided by project owner (locked truths)
+- FLAMINGO-P1-006-system-context-final.md — shell only; no content available
+- FLAMINGO-P1-003-canonical-glossary-final.md — shell only; no content available
+
+---
+
+ASSUMPTIONS USED
+---
+- Four truth layers are used: legal, operational, workflow, and blockchain/evidentiary.
+  This taxonomy cleanly maps to the three authority planes established in P1-005 (legal,
+  operational, technical) with workflow separated from operational for precision.
+
+- "Workflow truth" is treated as a sub-category of operational truth — the current state of the
+  platform state machine. It is distinct from the broader operational registry in that workflow
+  state can change without a registry write, but in practice they are tightly coupled.
+
+- "Flamingo reflects" is used to describe states like TA_RECORDED and LEGALLY_COMPLETE where
+  Flamingo holds an operational representation of an external legal event. Flamingo does not own
+  these records; it reflects confirmed signals from the TA.
+
+- The "divergence window" between CHAIN_EXECUTED and TA_RECORDED is explicitly called out in
+  Section 8 (Token Representation interpretation note) because this is the highest-risk period
+  for source-of-truth confusion in tokenized securities platforms.
+
+- Reconciliation status is treated as a Flamingo-owned operational artifact that reflects the
+  result of comparing Flamingo records against TA signals. It does not constitute a legal
+  determination in either direction.
+
+- Investor security interest is the single most important source-of-truth boundary — the TA's
+  legal record governs, not Flamingo's registry and not the token state. This is called out
+  explicitly in the matrix with a "Critical" note.
+
+---
+
+OBJECTS AND STATES INCLUDED
+---
+Identity and entity records:
+- Issuer identity, offering identity, investor identity / account reference, investor security
+  interest
+
+Token records:
+- Token representation, transfer restriction status
+
+Transfer lifecycle states (all 8):
+- REQUESTED, UNDER_REVIEW, APPROVED, CHAIN_EXECUTED, TA_INSTRUCTION_SENT, TA_ACKNOWLEDGED,
+  TA_RECORDED, LEGALLY_COMPLETE
+
+Instruction and status records:
+- TA instruction record, TA acknowledgment record, TA-recorded completion, legal completion status
+
+Review, audit, and reconciliation records:
+- Transfer review status, approval status, audit / event log, reconciliation status,
+  exception / break record
+
+---
+
+SELECTED SOURCE-OF-TRUTH PRINCIPLES
+---
+STP-001: TA legal books are the authoritative SOT for investor ownership
+STP-002: Flamingo operational registry is authoritative for workflow/operational tracking only
+STP-003: Blockchain logs are evidentiary only — not legal books
+STP-004: TA supersedes Flamingo in all conflicts
+STP-005: Workflow state does not create legal finality
+STP-006: LEGALLY_COMPLETE requires confirmed TA_RECORDED
+STP-007: Operational and legal record ownership do not overlap
+STP-008: Ambiguous status resolves in favor of explicitly defined authoritative system
+STP-009: TA_ACKNOWLEDGED ≠ TA_RECORDED
+STP-010: Token state is evidentiary; it does not constitute legal proof of ownership independent
+          of the TA's records
+
+---
+
+UNRESOLVED ITEMS
+---
+UI-P8-001: Securitize confirmation signal at TA_ACKNOWLEDGED and TA_RECORDED (data format, API)
+  — [REQUIRES SECURITIZE CONFIRMATION]
+
+UI-P8-002: Reconciliation process, SLA, and escalation path between Flamingo and Securitize
+  — [REQUIRES SECURITIZE CONFIRMATION]
+
+UI-P8-003: Legal interpretation of when LEGALLY_COMPLETE may be displayed to investors
+  in v1 Reg D offerings specifically
+  — [REQUIRES REG D COUNSEL INPUT]
+
+UI-P8-004: Internal role allocation — which platform role owns workflow-truth updates at each state
+  — [REQUIRES INTERNAL DECISION]

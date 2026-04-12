@@ -1,0 +1,119 @@
+FLAMINGO-P2-009 Admin-Reviewed Transfer Policy — Answers
+Last Updated: 2026-04-12 (initial draft)
+
+---
+
+SOURCE FILES USED
+---
+- 00-governance/LOCKED-DECISIONS.md (LD-021–LD-032, LD-039, LD-043)
+- FLAMINGO-P1-004-role-boundaries-final.md (role boundary rules; CRO authority scope)
+- FLAMINGO-P1-005-authority-model-final.md (AP-001–AP-010; authority matrix; role-by-role §9)
+- FLAMINGO-P1-009-canonical-transfer-lifecycle-final.md (LP-001–LP-010; UNDER_REVIEW state definition; evidence standards §9)
+- FLAMINGO-P1-010-assumptions-and-unknowns-policy-final.md (conservative handling of unresolved items)
+- FLAMINGO-P2-002-user-and-actor-model-final.md (Compliance/Review Operator §9.4; Platform Administrator §9.3)
+- FLAMINGO-P2-003-permission-model-final.md (PP-001–PP-010; §9.2 CRO permission posture; §10 action matrix Compliance Review rows; §11.2 UNDER_REVIEW rules)
+- FLAMINGO-P2-008-transfer-request-and-review-control-final.md (§8 review and decision rules; §9 decision paths; §6.4 validity preconditions; §11 evidence and record rules)
+- FLAMINGO-P2-012-legal-vs-operational-completion-final.md (CP-001–CP-012; Layer 0 taxonomy; §9 display rules; §11 workflow rules)
+
+---
+
+STRUCTURAL DECISIONS
+---
+- 18-section purpose-built structure; the most sections in any Phase 2 document so far.
+  Rationale: P2-009 covers more distinct policy areas than any prior document: review inputs, four decision outcomes, approval criteria organized in five sub-categories, 10 rejection criterion classes, correction criteria, escalation criteria, evidence rules for four record types, lifecycle alignment, prohibited assumptions. Collapsing any of these into a single section would make the document unusable as a policy reference. Reviewers, workbench designers, and compliance staff need to be able to navigate to the specific section they need — "what are the rejection criteria?" should have its own section, not be embedded in a general "rules" section.
+
+- Ten review policy principles (RP-001–RP-010) as a named-principle framework.
+  Rationale: the pattern from prior documents (AP-001–AP-010 in P1-005; PP-001–PP-010 in P2-003; CP-001–CP-012 in P2-012; LP-001–LP-010 in P1-009) is to anchor the document's governing rules in a numbered principle set that can be cited precisely in other documents, review checklists, and workbench design specs. RP-001–RP-010 follow this pattern. They are derived from locked decisions and prior authority/permission principles — no new authority is introduced.
+
+- Rejection criterion class codes (C-REJ-001 through C-REJ-010).
+  Rationale: structured rejection codes serve three functions: (1) they make rejection records more auditable — a record saying "C-REJ-002: KYC/AML failed" is more useful than a narrative-only record; (2) they create a reference anchor for P3-008 (Compliance Review Workbench) to implement structured rejection tracking; (3) they enable rejection pattern analysis over time (e.g., if most rejections are C-REJ-004, there's a wallet registration process issue). Ten codes cover the full range of v1 rejection scenarios without over-specifying.
+
+- Priority hierarchy in §8.3 (Reject > Escalate > Return for Correction > Approve).
+  Rationale: the most common reviewer uncertainty question is "what do I do when multiple issues are present?" Without a priority hierarchy, reviewers may issue inconsistent multi-issue decisions or default to the most optimistic available path. The hierarchy resolves this: if any rejection criterion is met, Reject. If no rejection but an escalation condition, Escalate. If no rejection/escalation but a correction gap, Return. Only if all criteria are satisfied: Approve. This eliminates discretionary multi-path ambiguity.
+
+- §9.6 "What Approval Does NOT Assert" as a required subsection of the approval criteria.
+  Rationale: the most dangerous misunderstanding in a review policy is the belief that "approved" means "done." Embedding the boundary statement directly within the approval criteria section — not just in the prohibited assumptions section — ensures that anyone reading the approval criteria also reads what the approval does not produce. This is a deliberate placement decision.
+
+- §13.7 immutability rule for review records.
+  Rationale: review decision records must be immutable because they are the audit evidence for the review decision. If a reviewer can modify a review record after the fact, the audit trail is compromised. The correction path (correction record linked to original) preserves immutability while allowing errors to be documented and corrected.
+
+---
+
+REVIEWER OUTCOME MODEL SELECTED
+---
+Four canonical outcomes: Approve, Reject, Return for Correction, Escalate / Hold.
+Rationale: these are the four paths established in P2-008 §9. P2-009 does not add new paths — it defines the policy criteria that govern when each path applies. Keeping the same four-path model ensures consistency between the workflow control document (P2-008) and the review policy document (P2-009).
+
+Conservative default rule: uncertainty does not default to approval.
+Rationale: P1-010 (Assumptions and Unknowns Policy) establishes the general principle that unresolved items must be labeled and handled conservatively, not resolved by assumption. Applied to the review policy: a reviewer who cannot affirmatively confirm all criteria should not approve. Return for Correction or Escalate are the conservative alternatives.
+
+---
+
+APPROVAL CRITERIA DECISIONS
+---
+- Approval criteria are organized into five substantive categories plus a "what approval does NOT assert" clause.
+  Rationale: the five categories (eligibility, wallet, transfer restriction, position/registry, completeness) map directly to the five types of review evaluation a reviewer must perform. This structure makes it easy to design a compliance review checklist from this document.
+
+- Transfer restriction criteria in §9.3 are deliberately sparse, with prominent [REQUIRES REG D COUNSEL INPUT] tags.
+  Rationale: the specific Reg D 506(c) holding periods and transfer restriction eligibility conditions have not been confirmed by counsel. Inventing specific criteria would be a violation of the assumptions policy (P1-010) and could lead to reviewers applying incorrect criteria. The correct approach is to define the category (transfer restriction compliance must be assessed), state the conservative interim rule (escalate any ambiguity), and flag the pending input required. When counsel confirms the specifics, §9.3 content can be filled in.
+
+- KYC/AML and accreditation are required at both submission time (P2-008 §6.4) and review time (P2-009 §9.1).
+  Rationale: status that was current at submission may have lapsed by the time of review. The review is a separate check — not just a validation that submission preconditions were met. The reviewer must confirm currency at review time, not assume it from the submission timestamp.
+
+---
+
+REJECTION CRITERIA DECISIONS
+---
+- Rejection criterion codes are designed as a complete set covering all known v1 rejection scenarios.
+  C-REJ-001 through C-REJ-005 cover the five most structurally important rejection reasons (ineligibility, KYC failure, accreditation failure, no wallet, restriction conflict). C-REJ-006 through C-REJ-010 cover the remaining v1-specific rejection reasons.
+
+- The boundary between rejection (C-REJ-002/003) and return-for-correction (re-verification in progress) is explicitly defined in §10.1 notes.
+  Rationale: a failed KYC/AML check is a rejection — but a check that has lapsed due to a re-verification timing gap (re-verification currently in progress) may be a return for correction. This distinction is operationally important. The notes in §10.1 make it explicit.
+
+- Restriction conflict (C-REJ-005) is defined as "clear conflict, not ambiguous."
+  Rationale: if the restriction conflict is ambiguous (requires legal interpretation), the correct path is Escalate, not Reject. Rejecting an ambiguous restriction case without legal input would be resolving a legal question at the product review layer — which is outside the reviewer's authority.
+
+---
+
+ESCALATION CRITERIA DECISIONS
+---
+- Escalation criteria in §12.1 use the same resolution-owner tag system as the open items tracker.
+  Rationale: this creates a direct link between escalation triggers and the parties responsible for resolving them. A reviewer escalating because of a transfer restriction ambiguity knows to tag [REQUIRES REG D COUNSEL INPUT]; the escalation record uses the same language as the pending items in the unresolved items register.
+
+- Escalation is explicitly prohibited as a method to defer a clear rejection.
+  Rationale: the risk of escalation being used to avoid a difficult but clearly correct rejection is real. §12.2 explicitly states: "If the basis for rejection is clear, the decision is Reject — not Escalate." This prevents escalation from becoming a soft-rejection path that avoids accountability.
+
+---
+
+COMPLETION BOUNDARY DECISIONS
+---
+- §14 (Lifecycle and Completion Boundary Alignment) uses the same structure as P2-012 §6 (completion-layer taxonomy) to cross-reference the completion events that are outside review scope.
+  Rationale: §14.3 lists all post-APPROVED completion events (CHAIN_EXECUTED through LEGALLY_COMPLETE plus REDEEMED) and explicitly states why each is outside review scope. This ensures that anyone reading the review policy has a direct pointer to why review approval is not terminal.
+
+- The SOT rules at review (§14.4) match P1-008 and P2-012 §10.2.
+  Rationale: consistency is essential. The source-of-truth assignments at the review layer must be the same as those established in the foundational documents — no relaxation, no new assignments.
+
+---
+
+UNRESOLVED ITEMS
+---
+UI-P2-009-001: Transfer restriction and holding period criteria — [REQUIRES REG D COUNSEL INPUT] — most significant content gap
+UI-P2-009-002: KYC/AML status currency rules — [REQUIRES REG D COUNSEL INPUT]
+UI-P2-009-003: Accreditation status currency rules — [REQUIRES REG D COUNSEL INPUT]
+UI-P2-009-004: Role permission matrix CLD-003 — [REQUIRES SECOND STREET INPUT]
+UI-P2-009-005: Entity investor additional review criteria — [REQUIRES REG D COUNSEL INPUT]
+UI-P2-009-006: Recipient wallet eligibility review — [REQUIRES INTERNAL DECISION] [REQUIRES SECOND STREET INPUT]
+UI-P2-009-007: Cross-border investor eligibility criteria — [REQUIRES CROSS-BORDER LEGAL INPUT]
+UI-P2-009-008: Offering-specific review criteria — [REQUIRES SECOND STREET INPUT]
+
+All 8 non-blocking. UI-P2-009-001 is the most impactful — it defines the transfer restriction review criteria that are the core content gap in §9.3.
+
+---
+
+ASSUMPTIONS USED
+---
+- Approval criteria are organized by the same five categories used in P2-008 §8.3 (review criteria categories). This creates direct structural continuity between the workflow control document and the review policy document. A reviewer reads P2-008 to understand the workflow; they read P2-009 to understand the policy criteria within that workflow.
+
+- The conservative default rule (uncertainty does not default to approval) is stated in §5 as the overarching policy posture, in §8.2 as the reviewer decision rule, and in §15 as a prohibited assumption. This triple-statement is intentional — it is the most important behavioral rule in the review policy.
+
+- "Approved Wallet on the ERC-3643 allowlist" is confirmed as both a submission precondition (P2-008 §6.4) and a review criterion (P2-009 §9.2). The rationale is that the allowlist could change between submission and review — a wallet that was on the allowlist at submission may have been removed. The reviewer must confirm current allowlist status at review time, not assume it from the submission record.

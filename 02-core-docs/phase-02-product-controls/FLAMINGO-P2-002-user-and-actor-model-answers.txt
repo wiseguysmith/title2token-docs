@@ -1,0 +1,112 @@
+FLAMINGO-P2-002 User and Actor Model — Answers
+Last Updated: 2026-04-12 (initial draft)
+
+---
+
+SOURCE FILES USED
+---
+- 00-governance/LOCKED-DECISIONS.md (LD-001–LD-043)
+- FLAMINGO-P1-004-role-boundaries-final.md (canonical role definitions, boundary rules, confusion risks)
+- FLAMINGO-P1-005-authority-model-final.md (authority matrix, AP-001–AP-010)
+- FLAMINGO-P1-006-system-context-final.md (5-layer ecosystem model, actor/system context table §9)
+- FLAMINGO-P1-007-v1-scope-boundary-final.md (out-of-scope actors)
+- FLAMINGO-P1-009-canonical-transfer-lifecycle-final.md (actor authority per lifecycle state §10)
+- FLAMINGO-P2-001-platform-capabilities-and-non-capabilities-final.md (capability surface mapping to actors)
+
+---
+
+STRUCTURAL DECISIONS
+---
+- 14-section purpose-built structure; departed from standard 14-section core doc template
+  Rationale: the document's organizing framework is the actor classification model and per-actor definitions, not "State/Workflow/Controls." The 14 sections map to: overview, classification, list, relationships, per-actor definitions, interpretation rules, confusion risks, dependencies, unresolved items, review.
+
+- Three-zone overview diagram in Section 5 (Inside Flamingo / At the Boundary / Outside Flamingo)
+  Rationale: clearest spatial representation of the actor model; matches the layered structure from P1-006 system context but reframed from "inside / outside / depends on" to "inside / boundary / outside." The three-zone framing directly informs the Permission Model question of who has platform access vs. who participates at a boundary.
+
+- 7 actor classes in Section 6
+  Rationale: 7 classes are needed to distinguish all meaningful actor types without collapsing important distinctions (e.g., "External Regulated Party" vs. "External Integration/Vendor Layer" — Securitize and KYC vendor are both external, but their authority relationship with Flamingo is categorically different).
+
+- 18 canonical actors listed in Section 7
+  Rationale: 18 actors cover the full ecosystem including explicitly out-of-scope actors (Broker-Dealer, Custodian) and explicitly named system layers (Operational Registry, Legal Holder-of-Record System). Including out-of-scope actors prevents them from being accidentally introduced in downstream documents without a scope change.
+
+- Legal Holder-of-Record System listed separately from Transfer Agent (Securitize)
+  Rationale: The distinction between "Securitize as a vendor" and "Securitize's legal books as the authoritative legal record" is architecturally important. Downstream documents that discuss conflicts between Flamingo's registry and the TA's records need a named artifact for "the authoritative legal record" that does not collapse the distinction. This also future-proofs the model — if Securitize is replaced as the designated TA in a future version, the Legal Holder-of-Record System actor definition transfers cleanly to the new TA.
+
+- Approved Wallet listed as a Platform System Layer (controlled object) rather than as a property of the Investor actor
+  Rationale: The wallet is a distinct registered object that is: (a) submitted by an investor, (b) reviewed and approved by a Platform Administrator, (c) added to the on-chain allowlist. Treating it as an Investor property would obscure the approval workflow and the Base/ERC-3643 enforcement relationship. It needs to be a named actor/object to be correctly modeled in the Permission Model and investor intake workflow.
+
+---
+
+ACTOR CLASSES SELECTED
+---
+1. Platform User — Platform Administrator, Compliance/Review Operator, limited investor access
+2. Internal Operational Role — Platform Administrator, Compliance/Review Operator
+3. External Human Participant — Investor (individual), Legal Counsel
+4. Legal / Business Entity — Issuer (SPV), Investor Entity, Tenant
+5. External Regulated Party — Transfer Agent (Securitize), Broker-Dealer, Custodian
+6. Platform System Layer — Flamingo Platform, Token Contract Layer (ERC-3643), Operational Registry, Legal Holder-of-Record System
+7. External Integration / Vendor Layer — Base Network, KYC/AML Provider, Accreditation Provider
+
+---
+
+CANONICAL ACTORS SELECTED (18)
+---
+1. Flamingo Platform — Platform System Layer (the product itself)
+2. Tenant — Legal/Business Entity (deploys and configures the platform)
+3. Platform Administrator — Platform User / Internal Operational Role
+4. Compliance / Review Operator — Platform User / Internal Operational Role
+5. Issuer (SPV / Fund Vehicle) — Legal/Business Entity (external; offering terms authority)
+6. Investor — External Human Participant (individual; submits transfer requests)
+7. Investor Entity — Legal/Business Entity (entity form of investor)
+8. Approved Wallet — Platform System Layer / controlled object (registered on-chain wallet address)
+9. Transfer Agent (Securitize) — External Regulated Party (legal holder of record)
+10. Legal Counsel — External Human Participant (advisory; no platform role)
+11. Accreditation Provider — External Integration/Vendor Layer (eligibility verification)
+12. KYC/AML Provider — External Integration/Vendor Layer (identity verification execution)
+13. Broker-Dealer — External Regulated Party (out of scope v1)
+14. Custodian — External Regulated Party (out of scope v1)
+15. Base Network — External Integration/Vendor Layer (blockchain execution environment)
+16. Token Contract Layer (ERC-3643) — Platform System Layer (Flamingo-administered contracts on Base)
+17. Operational Registry — Platform System Layer (internal workflow record system)
+18. Legal Holder-of-Record System — External Regulated Party (Securitize's legal books)
+
+---
+
+RELATIONSHIP DECISIONS
+---
+- Tenant ≠ Issuer was made explicit as a key confusion risk
+  Rationale: In some deployments, a tenant (like Second Street Capital) may sponsor or be affiliated with an issuer SPV. If these are not explicitly distinguished, documentation and product design may blur the operator role and the issuer role. This must be prevented at the actor model layer.
+
+- Approved Wallet cardinality: one per investor per offering relationship (v1 design intent, pending confirmation)
+  Rationale: The prompt specified "one approved wallet record per approved relationship in v1." This is treated as current design intent but flagged as UI-P2-007 requiring confirmation. The reason it matters: if one wallet is shared across all offerings, the permission and allowlist management model differs significantly from per-offering wallet registration.
+
+- Legal Holder-of-Record System relationship to Operational Registry: the former governs on all legal holder conflicts
+  Rationale: This is LD-017 and LD-040 made explicit at the actor relationship level. Both the relationship table and the actor-by-actor definitions state this clearly to prevent registry-as-legal-record confusion in downstream documents.
+
+- KYC/AML Provider and Accreditation Provider are listed without naming specific vendors
+  Rationale: Neither vendor is selected. The actor definitions describe the structural role (what function this actor performs, what Flamingo's role is at the boundary) without assuming a specific vendor. This is consistent with P1-010 assumptions policy — describe structurally, tag as pending.
+
+---
+
+UNRESOLVED ITEMS
+---
+UI-P2-007: Approved Wallet cardinality model — [REQUIRES INTERNAL DECISION]
+UI-P2-008: Role permission matrix scope — [REQUIRES SECOND STREET INPUT]
+UI-P2-009: Entity investor KYC/accreditation treatment differences — [REQUIRES REG D COUNSEL INPUT]
+UI-P2-010: Securitize actor boundary specifics — [REQUIRES SECURITIZE CONFIRMATION]
+UI-P2-011: KYC/AML vendor selection — [REQUIRES INTERNAL DECISION]
+UI-P2-012: Accreditation provider selection — [REQUIRES INTERNAL DECISION]
+
+All 6 are non-blocking for Phase 2 drafting continuation.
+
+---
+
+ASSUMPTIONS USED
+---
+- The investor has limited platform access (transfer request submission and status viewing) but is not a full platform user in the same sense as a Platform Administrator. The document treats investor-facing access as a boundary interaction, not a full Platform User relationship, to preserve the distinction between the operational console (Platform Admins) and the investor-facing interface.
+
+- "Launch Tenant" is treated as an instance of the Tenant actor (Second Street Capital) rather than a separate actor. It is noted within the Tenant actor definition rather than listed as a separate canonical actor. The model should be tenant-class, not Second-Street-specific.
+
+- The Token Contract Layer (ERC-3643) is listed as a Platform System Layer (Flamingo-administered) rather than as part of the Base Network actor, because the admin control relationship is different: Flamingo has admin operations on the contracts (mint, burn, freeze, allowlist) but no control over the Base network itself. This distinction matters for the permission model.
+
+- Legal Holder-of-Record System is listed as a separate actor entry (actor 18) even though it is Securitize's internal legal record. This is an architectural/conceptual distinction, not a separate vendor. The naming convention used ("Legal Holder-of-Record System") is consistent with P1-003 canonical glossary terms.

@@ -1,0 +1,104 @@
+FLAMINGO-P2-005 Investor Intake and Eligibility Boundary — Answers
+Last Updated: 2026-04-12 (initial draft)
+
+---
+
+SOURCE FILES USED
+---
+- 00-governance/LOCKED-DECISIONS.md (LD-038, LD-039, LD-041, LD-043)
+- FLAMINGO-P1-004-role-boundaries-final.md (Platform Administrator, CRO role constraints)
+- FLAMINGO-P1-005-authority-model-final.md (AP-001–AP-010; Flamingo cannot certify eligibility)
+- FLAMINGO-P1-009-canonical-transfer-lifecycle-final.md (LP-001–LP-010; UNDER_REVIEW preconditions)
+- FLAMINGO-P1-010-assumptions-and-unknowns-policy-final.md (conservative handling of unresolved items)
+- FLAMINGO-P2-001-platform-capabilities-and-non-capabilities-final.md (intake as core capability; KYC/AML as external-adjacent)
+- FLAMINGO-P2-002-user-and-actor-model-final.md (Investor Individual §9.1; Investor Entity §9.7; actor classification)
+- FLAMINGO-P2-003-permission-model-final.md (PP-001–PP-010; sensitive data access rules; §8.2 CRO data access)
+- FLAMINGO-P2-008-transfer-request-and-review-control-final.md (§6.4 validity preconditions)
+- FLAMINGO-P2-009-admin-reviewed-transfer-policy-final.md (§9.1 accreditation/KYC currency at review)
+
+---
+
+STRUCTURAL DECISIONS
+---
+- 17-section structure.
+  Rationale: P2-005 covers more distinct operational domains than a typical Phase 2 document: intake data capture, accreditation routing, KYC/AML routing, wallet-linked prerequisites, a 6-state eligibility model, product language rules, and prohibited assumptions. Each domain needs its own section to be usable as a reference by downstream documents (P2-008, P2-009) and workbench designers (P3-014). Combining, e.g., accreditation routing and KYC/AML routing into one "provider routing" section would obscure the distinct boundary rules for each track.
+
+- IE-001–IE-010 principle codes.
+  Rationale: the principle-code pattern established in prior documents (AP-001–AP-010, PP-001–PP-010, CP-001–CP-012, LP-001–LP-010, RP-001–RP-010) allows downstream documents and review checklists to cite specific rules precisely. IE codes anchor the intake/eligibility rules so they can be cited in P2-008 §6.4 validity preconditions, P2-009 §9.1 approval criteria, and P3-014 security design without repeating the full rule each time.
+
+- WE-001–WE-005 wallet eligibility codes.
+  Rationale: wallet eligibility is a distinct prerequisite track from identity/accreditation/KYC. Giving wallet rules their own codes (WE-) signals that they are separate from IE- intake/eligibility rules. This prevents the common conflation: "investor has good KYC, therefore wallet is approved" — which is wrong (WE-001, WE-003).
+
+---
+
+SIX-STATE ELIGIBILITY MODEL DECISIONS
+---
+- Six states (ES-001 through ES-006) rather than a simpler binary or three-state model.
+  Rationale: a binary "eligible / not eligible" model is insufficient for the operational layer because it conflates: (a) intake not yet complete, (b) provider results pending, (c) results received and positive, (d) results received and negative, (e) results received but now stale. These five situations require different platform responses — different UI states, different queue states, different administrative actions. A six-state model (with ES-002 as the submission/in-progress state distinct from ES-003 provider-pending) captures the granularity needed for P2-016 (Operator Console Controls) and P3-014 (access control).
+
+- ES-004 (Operationally Ready) requires ALL THREE tracks simultaneously.
+  Rationale: IE-006 and IE-005 establish that the three tracks are independent requirements, not alternatives. A wallet-registered investor with no KYC/AML result is not operationally ready. An accredited investor with no Approved Wallet cannot submit a transfer request. The three-track simultaneous requirement prevents partial satisfaction from being treated as sufficient.
+
+- ES-006 (Stale — Needs Refresh) as a named state.
+  Rationale: stale eligibility is a distinct operational condition from active disqualification (ES-005) and from missing results (ES-003). An investor in ES-006 previously passed all checks and is subject to re-verification — not a new intake. Treating ES-006 as ES-003 would misrepresent the investor's history and could cause incorrect re-routing (full intake process vs. targeted re-verification).
+
+---
+
+THREE-TRACK PREREQUISITE MODEL DECISIONS
+---
+- Accreditation, KYC/AML, and Approved Wallet as three explicitly separate tracks.
+  Rationale: conflating these is the most common product-design error in regulated platforms. Treating "accreditation complete" as equivalent to "investor ready" omits both KYC/AML and wallet requirements. Treating wallet registration as part of the identity check conflates a blockchain-enforcement mechanism with a compliance determination. The three-track separation is architecturally necessary for accurate ES-004 gating and for correct review criteria in P2-009 §9.1–§9.2.
+
+- Wallet registration boundary in §11.4.
+  Rationale: Flamingo records wallet registrations and confirms allowlist status — it does not independently determine which wallets may participate in the ERC-3643 ecosystem. The allowlist is authoritative (LD-041). This boundary statement prevents Flamingo from being designed as an override layer for the on-chain allowlist mechanism.
+
+---
+
+ROUTING BOUNDARY DECISIONS
+---
+- Separate sections for accreditation routing (§9) and KYC/AML routing (§10).
+  Rationale: these are distinct provider relationships with potentially different vendors, different result signal taxonomies, different currency window rules, and different downstream impact. A single "provider routing" section would force both into a common structure that may not fit either accurately. Downstream documents (P3-006 TA Integration, P3-014 Security) that need to reference routing protocol can cite §9 or §10 with specificity.
+
+- "What Flamingo does NOT do" subsections in both §9 and §10.
+  Rationale: the most dangerous design drift in intake is expanding Flamingo's role from "routes and records" to "determines and certifies." The explicit NOT-do list mirrors the pattern from P2-001 (Non-Capabilities), P2-012 (what approval does NOT assert), and P2-009 (what review approval does NOT assert). Placing the prohibition list alongside the capability list — not just in the prohibited assumptions section — ensures that designers reading §9 see both what Flamingo does and what it may not do in the same context.
+
+---
+
+PRODUCT-BOUNDARY LANGUAGE DECISIONS
+---
+- Prohibited language table in §13.2.
+  Rationale: the most common UI/product copy error in regulated platforms is using legally loaded terms ("accredited investor," "KYC approved," "eligible") as product assertions when the platform has only routed data to a provider. The table of prohibited language provides a concrete reference for product designers, UX writers, and compliance reviewers. "Operationally ready" is permitted because it is an explicit operational state — not a legal assertion.
+
+- "Operationally ready" as the approved product-layer formulation.
+  Rationale: this term was selected in P1-003 (Canonical Glossary) and P2-002 (User and Actor Model). Using it consistently across P2-005 and downstream documents (P2-008 §6.4, P2-009 §9.1) creates a uniform product-layer vocabulary that avoids legal certification language while accurately describing the operational state.
+
+---
+
+CONSERVATIVE ELIGIBILITY HANDLING DECISIONS
+---
+- IE-010: conservative default — ambiguity not resolved in investor's favor.
+  Rationale: P1-010 (Assumptions and Unknowns Policy) establishes the platform-wide principle that unresolved items are handled conservatively. Applied to eligibility: if a provider result is ambiguous, expired, or absent, the investor is not moved to ES-004. This mirrors the conservative review default in P2-009 (RP-005; §8.2; §15 prohibited assumption #7). Consistency across intake (P2-005) and review (P2-009) is essential — a conservative review standard is undermined if the intake layer can advance investors to ES-004 under ambiguity.
+
+---
+
+UNRESOLVED ITEMS
+---
+UI-P2-005-001: KYC/AML vendor selection — [REQUIRES VENDOR SELECTION] — most operationally blocking for P3-006 design
+UI-P2-005-002: Accreditation provider selection — [REQUIRES INTERNAL DECISION]
+UI-P2-005-003: KYC/AML result currency window — [REQUIRES REG D COUNSEL INPUT] — same input also resolves P2-009 UI-P2-009-002
+UI-P2-005-004: Accreditation result currency window — [REQUIRES REG D COUNSEL INPUT] — same input also resolves P2-009 UI-P2-009-003
+UI-P2-005-005: Entity investor additional eligibility requirements — [REQUIRES REG D COUNSEL INPUT]
+UI-P2-005-006: Cross-border investor eligibility — [REQUIRES CROSS-BORDER LEGAL INPUT] — non-blocking for v1
+UI-P2-005-007: Wallet cardinality — [REQUIRES INTERNAL DECISION]
+
+All 7 non-blocking. UI-P2-005-001 (KYC/AML vendor) is the most impactful for downstream service design (P3-006 integration protocol; result signal mapping). UI-P2-005-003 and UI-P2-005-004 (currency windows) are shared with P2-009 open items — the same Reg D counsel engagement resolves both sets.
+
+---
+
+ASSUMPTIONS USED
+---
+- The three-track prerequisite model (accreditation + KYC/AML + Approved Wallet) is derived from P2-008 §6.4 validity preconditions. P2-005 is the canonical source for what each track requires; P2-008 references the readiness gate outcome (ES-004) without restating the full track requirements.
+
+- The currency window questions (UI-P2-005-003, UI-P2-005-004) are the same questions raised in P2-009 as UI-P2-009-002 and UI-P2-009-003. This linkage is explicit in the open items — one Reg D counsel engagement should resolve all four items.
+
+- ES-005 (Operationally Blocked) remediation path is not defined. The document notes that ES-005 has no automated re-entry to ES-004 and requires review. The specific remediation process is deferred as UI-P2-005-007 — once the platform determines whether a re-verification path is available after a negative result, the remediation workflow can be defined. Inventing a remediation path without legal input would be a violation of P1-010.

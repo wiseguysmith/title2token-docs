@@ -1,0 +1,116 @@
+FLAMINGO-P1-010 Assumptions and Unknowns Policy — Answers
+Last Updated: 2026-04-11
+
+---
+
+SOURCE FILES USED
+---
+- 00-governance/LOCKED-DECISIONS.md (LD-001–LD-034; CLD-001–CLD-004)
+- 02-core-docs/phase-01-foundation/FLAMINGO-P1-002-locked-decisions-final.md
+- 02-core-docs/phase-01-foundation/FLAMINGO-P1-004-role-boundaries-final.md
+- 02-core-docs/phase-01-foundation/FLAMINGO-P1-005-authority-model-final.md
+- 02-core-docs/phase-01-foundation/FLAMINGO-P1-007-v1-scope-boundary-final.md
+- 02-core-docs/phase-01-foundation/FLAMINGO-P1-008-source-of-truth-matrix-final.md
+- 02-core-docs/phase-01-foundation/FLAMINGO-P1-009-canonical-transfer-lifecycle-final.md
+- All prior companion open-items files (P1-002 through P1-009)
+- Project constraints provided by project owner (locked truths)
+- P1-001, P1-003, P1-006 — shells; no content available
+
+---
+
+ASSUMPTIONS USED
+---
+- The resolution-owner tag vocabulary is treated as fixed for v1: [REQUIRES REG D COUNSEL INPUT],
+  [REQUIRES SECURITIZE CONFIRMATION], [REQUIRES SECOND STREET INPUT], [REQUIRES INTERNAL DECISION].
+  New tags may be added if a new named party enters scope — this is tracked as UI-P10-001.
+
+- The nine-category classification model is treated as exhaustive for v1 project documentation.
+  The working assumption is that no new category type will be needed. If a new type emerges,
+  it must be added via internal decision (UI-P10-001).
+
+- The 8-status document status model is an extension of the STATUS-BOARD model. The STATUS-BOARD
+  carries the standard 5 statuses (SHELL CREATED, DRAFTED, READY, APPROVED, LOCKED). The
+  P1-010 policy adds 3 operational sub-statuses (PARTIAL/BLOCKED, WAITING ON LEGAL,
+  WAITING ON VENDOR) for internal tracking purposes. These are compatible but the STATUS-BOARD
+  itself uses only the standard 5. This is an internal operational distinction — not a conflict.
+
+- The five certainty levels (LOCKED TRUTH through UNRESOLVED DEPENDENCY) are treated as a
+  complete hierarchy for v1. Sub-levels (e.g., distinguishing between "assumption confirmed
+  verbally but not in writing" vs. "assumption unconfirmed") are not introduced for v1 to
+  avoid classification overhead.
+
+- All examples cited in Section 7 (Definitions) are drawn from existing unresolved items in
+  prior Phase 1 documents. No invented examples were used.
+
+- The carry-forward model in Section 12 does not specify a technical mechanism for tracking
+  (e.g., a dedicated tracking spreadsheet or issue tracker). The working assumption is that
+  the open-items companion files and STATUS-BOARD together provide sufficient tracking for v1.
+  If a formal tracking system is adopted, this section will need to be updated.
+
+- The document treats itself as subject to the policy it defines. Section 16 (Review Notes)
+  makes this explicit. This is intentional — the policy must be credible and self-applicable.
+
+---
+
+CLASSIFICATION MODEL CONSTRUCTION
+---
+The nine categories were derived by examining all prior unresolved items across P1-002 through
+P1-009 and extracting the distinct resolution patterns:
+
+1. Items resolved by formal change control → Locked Decision
+2. Items with structural lock but pending detail → Conditionally Locked Decision
+3. Items provisionally resolved by author → Working Assumption
+4. Items not yet assigned → Open Unknown
+5. Items requiring legal input → External Legal Dependency
+6. Items requiring vendor input → Vendor Confirmation Dependency
+7. Items requiring named internal stakeholder → Internal Decision Dependency
+8. Items that can be tracked without blocking work → Non-Blocking Unresolved Item
+9. Items that prevent work from proceeding → Blocking Unresolved Item
+
+Categories 8 and 9 are cross-cutting (any item of types 1-7 can also be blocking or non-blocking).
+The model treats blocking/non-blocking as a status attribute of unresolved items, not a
+separate category type.
+
+---
+
+PROHIBITED BEHAVIORS LIST CONSTRUCTION
+---
+The eleven prohibited behaviors in Section 13 were derived from patterns observed in
+documentation failures in regulated-domain projects:
+- Certainty upgrade without evidence: the most common drafting failure
+- TBD without classification: leaves readers unable to act on the item
+- Treating absence of challenge as confirmation: particularly risky in review cycles
+- Inferring legal finality: specific risk given Flamingo's Reg D context
+- Inferring vendor behavior from documentation: specific risk given Securitize integration
+- Removing items without resolving them: silently drops accountability
+- False blocking/non-blocking classification: corrupts status tracking
+- Unilateral internal decisions: bypasses named stakeholder accountability
+- Architectural workarounds for unresolved dependencies: masks risk
+- Assumption inheritance across documents: working assumption becomes invisible fact
+
+---
+
+DRAFTING CONDUCT FOR THIS DOCUMENT
+---
+- Section 9 (Drafting Rules Under Uncertainty) was written to apply to all Flamingo work,
+  including future implementation documents. The rules are general enough to apply in Phase 2
+  and Phase 3 contexts that do not yet exist.
+
+- Section 10 (Review and Escalation Rules) covers review conduct for all document types.
+  The specific examples of "when counsel input is required" and "when vendor confirmation is
+  required" are drawn from existing open items and are not exhaustive — they are illustrative.
+
+- The carry-forward model in Section 12 was kept operational rather than prescriptive about
+  tooling. No assumption was made about what project management tools Flamingo will use.
+
+---
+
+UNRESOLVED ITEMS
+---
+UI-P10-001: Whether additional resolution-owner tag types are needed for parties not yet named
+  (e.g., compliance team, blockchain vendor, third-party auditor).
+  [REQUIRES INTERNAL DECISION]
+
+UI-P10-002: Whether the document status model (Section 11) requires additional states for v1
+  workflow (e.g., IN LEGAL REVIEW, IN VENDOR REVIEW as distinct from WAITING ON).
+  [REQUIRES INTERNAL DECISION]

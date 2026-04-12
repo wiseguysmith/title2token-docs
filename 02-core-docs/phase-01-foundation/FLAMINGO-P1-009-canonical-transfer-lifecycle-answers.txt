@@ -1,0 +1,99 @@
+FLAMINGO-P1-009 Canonical Transfer Lifecycle — Answers
+Last Updated: 2026-04-11
+
+---
+
+SOURCE FILES USED
+---
+- 00-governance/LOCKED-DECISIONS.md (LD-021–LD-028 as primary anchors; LD-001–LD-034 in full)
+- 02-core-docs/phase-01-foundation/FLAMINGO-P1-002-locked-decisions-final.md
+- 02-core-docs/phase-01-foundation/FLAMINGO-P1-004-role-boundaries-final.md
+- 02-core-docs/phase-01-foundation/FLAMINGO-P1-005-authority-model-final.md (lifecycle authority table)
+- 02-core-docs/phase-01-foundation/FLAMINGO-P1-008-source-of-truth-matrix-final.md (Section 7.3)
+- Project constraints provided by project owner (locked truths)
+- P1-003, P1-006 — shells only; no content available
+
+---
+
+ASSUMPTIONS USED
+---
+- The 8-state chain is treated as strictly sequential with no sub-states in the canonical path.
+  Exception outcomes (rejection, failure, mismatch) are adjacent, not canonical.
+
+- "Entered when" and "Advanced when" are treated as distinct: entry is the trigger that
+  moves the transfer INTO the state; advancement is the condition that moves it OUT.
+
+- Four completion layers are used: no completion, technical execution, TA recordation, and legal
+  completion. Handoff and acknowledgment are not classified as completion layers — they are
+  intermediate operational events within the TA handoff domain.
+
+- LEGALLY_COMPLETE is treated as Flamingo's recognition of a TA legal act, not a Flamingo
+  legal determination. This framing preserves the authority boundary while explaining the state.
+
+- Exception paths are explicitly non-canonical. No REJECTED, FAILED, or ERROR states are added
+  to the canonical sequence. These are operational exception handling concerns for Phase 3.
+
+- The "divergence window" (between CHAIN_EXECUTED and TA_RECORDED) is acknowledged implicitly
+  in the state definitions — on-chain state may not match TA-recorded state during this window.
+  This aligns with P1-008 SOT matrix treatment.
+
+- TA_INSTRUCTION_SENT is treated as "handoff initiation" — not a completion state in any sense.
+  A successful API transmission is not the same as TA acknowledgment.
+
+- Evidence standards table (Section 9) establishes the minimum evidence required to enter each
+  state. This is intended to be implementation-constraining: any system that advances state
+  without meeting the evidence minimum has a defect.
+
+---
+
+STATE DEFINITIONS USED
+---
+1. REQUESTED — receipt only; no review, approval, or execution
+2. UNDER_REVIEW — manual compliance review in progress; no approval
+3. APPROVED — cleared for execution; not executed
+4. CHAIN_EXECUTED — on-chain execution confirmed; not legally complete
+5. TA_INSTRUCTION_SENT — instruction transmitted; not acknowledged
+6. TA_ACKNOWLEDGED — receipt confirmed by TA; not recorded
+7. TA_RECORDED — TA has legally recorded; legal act complete
+8. LEGALLY_COMPLETE — Flamingo recognizes confirmed TA_RECORDED; terminal
+
+---
+
+ADVANCEMENT PRINCIPLES USED
+---
+- No state skipping
+- No out-of-sequence transitions
+- External confirmations must be received signals, not inferred
+- Investor action alone insufficient for any transition
+- Admin review required for all v1 transfers
+- LEGALLY_COMPLETE requires confirmed TA_RECORDED — no exceptions
+
+---
+
+EXCEPTION CATEGORIES NOTED
+---
+- Review rejection (at UNDER_REVIEW)
+- Execution failure (at/before CHAIN_EXECUTED)
+- TA instruction failure (at TA_INSTRUCTION_SENT — no acknowledgment)
+- TA recording delay (at TA_ACKNOWLEDGED — no recording)
+- Reconciliation mismatch (operational exception, any state)
+- Stale / ambiguous status (operational exception)
+
+---
+
+UNRESOLVED ITEMS
+---
+UI-P9-001: TA_ACKNOWLEDGED signal format, timing, data content
+  — [REQUIRES SECURITIZE CONFIRMATION]
+
+UI-P9-002: TA_RECORDED confirmation signal format, timing, data content
+  — [REQUIRES SECURITIZE CONFIRMATION]
+
+UI-P9-003: SLA and retry/escalation path at TA_INSTRUCTION_SENT and TA_ACKNOWLEDGED
+  — [REQUIRES SECURITIZE CONFIRMATION]
+
+UI-P9-004: Reg D offering-specific conditions affecting LEGALLY_COMPLETE recognition / display
+  — [REQUIRES REG D COUNSEL INPUT]
+
+UI-P9-005: Authorized admin action and role permission matrix for manual state transitions
+  — [REQUIRES INTERNAL DECISION]

@@ -1,0 +1,114 @@
+FLAMINGO-P1-012 Dependency Map — Answers
+Last Updated: 2026-04-11
+
+---
+
+SOURCE FILES USED
+---
+- 00-governance/LOCKED-DECISIONS.md (LD-001–LD-034; CLD-001–CLD-004)
+- 02-core-docs/phase-01-foundation/FLAMINGO-P1-002-locked-decisions-final.md
+- 02-core-docs/phase-01-foundation/FLAMINGO-P1-004-role-boundaries-final.md
+- 02-core-docs/phase-01-foundation/FLAMINGO-P1-005-authority-model-final.md
+- 02-core-docs/phase-01-foundation/FLAMINGO-P1-007-v1-scope-boundary-final.md
+- 02-core-docs/phase-01-foundation/FLAMINGO-P1-008-source-of-truth-matrix-final.md
+- 02-core-docs/phase-01-foundation/FLAMINGO-P1-009-canonical-transfer-lifecycle-final.md
+- 02-core-docs/phase-01-foundation/FLAMINGO-P1-010-assumptions-and-unknowns-policy-final.md
+- All companion open-items files: P1-002, P1-004, P1-005, P1-007, P1-008, P1-009, P1-010
+- 00-governance/STATUS-BOARD.md (for current shell/drafted status of all documents)
+- P1-001, P1-003, P1-006, P1-011 — shells; confirmed as having no content
+
+---
+
+ASSUMPTIONS USED
+---
+- The dependency map is treated as a coordination and tracking document, not a system design
+  document. It does not design or constrain services — it catalogs what other documents and
+  decisions those services will depend on.
+
+- Twenty-six dependency entries (DEP-001 through DEP-026) represent the major identified
+  dependencies as of the Phase 1 drafting stage. This set is expected to grow when Phase 2
+  drafting surfaces additional sequencing dependencies. This expectation is noted as UI-P12-002.
+
+- The blocking/non-blocking classification for each dependency reflects current Phase 1 and
+  early Phase 2 activity. Some non-blocking dependencies become blocking at Phase 3 design
+  (e.g., DEP-004 through DEP-006 are non-blocking for Phase 1 drafting but blocking for
+  P3-006 and P3-012 design). This distinction is preserved in Section 11.
+
+- DEP-019 through DEP-022 are fully resolved (LOCKED). They are included in the dependency
+  map because they are the most consequential constraints, and their visibility in this map
+  ensures that no Phase 2 or Phase 3 document can claim ignorance of them.
+
+- The sequencing model in Section 10 is derived from actual content dependencies between
+  documents — not from an abstract sequencing theory. The governing principle: a document
+  cannot be finalized if it depends on a shell that has not yet been drafted.
+
+- The document treatment of P1-006 (System Context shell) as a critical pre-Phase-3 gate
+  is a working assumption. If Phase 3 service design begins before P1-006 is drafted, service
+  boundaries may diverge from the system context. This risk is noted in DEP-014.
+
+- No Phase 3 architectural detail was introduced into this document. The architecture and
+  implementation dependencies (DEP-017, DEP-018) are noted only at the level of "these
+  inputs are required before Phase 3 design" — not at the level of specifying the inputs.
+
+- The dependency principle list (Section 7, DP-001 through DP-010) was derived from the
+  handling rules in P1-010 (Assumptions and Unknowns Policy), translated into dependency-
+  specific language. The principles are consistent with — but distinct from — the P1-010
+  drafting rules.
+
+---
+
+DEPENDENCY IDENTIFICATION METHOD
+---
+Dependencies were identified by three methods:
+
+1. Scanning all prior companion open-items files (P1-002 through P1-010) for tagged unresolved
+   items. Each cluster of related items was consolidated into a single named dependency.
+
+2. Reviewing the STATUS-BOARD for shell documents and noting what downstream documents
+   depend on each shell for terminology, scope, or boundary content.
+
+3. Examining the locked decisions (LD-021 through LD-031) for workflow and SOT constraints
+   that all downstream documents must honor, and cataloging those as resolved LOCKED
+   dependencies for visibility.
+
+---
+
+DEPENDENCY CATEGORIES USED
+---
+- LEGAL: Requires legal counsel. Cannot be resolved internally.
+- VENDOR: Requires explicit confirmation from Securitize (or named vendor).
+- INTERNAL: Requires named internal stakeholder decision.
+- DOC: Upstream document is a shell; downstream content may need re-review when drafted.
+- ARCH: Implementation or design input not yet defined; required before Phase 3 work.
+- WORKFLOW: Process or state-machine constraint (all currently LOCKED for v1).
+- SOT: Record-ownership assignment (all currently LOCKED for v1).
+- REVIEW: Specific review type required before document status advancement.
+- IMPL: Document or decision input required before implementation-safe design can proceed.
+
+---
+
+BLOCKING/NON-BLOCKING INTERPRETATION USED
+---
+"Blocking" in this document means blocking for a specific activity:
+- "Blocking for current drafting" means the document cannot be drafted without resolution.
+- "Blocking for Phase 3 design" means the Phase 3 service cannot be designed without resolution.
+- "Blocking for APPROVED status" means the document can be DRAFTED but not APPROVED.
+
+All current Phase 1 unresolved items are non-blocking for Phase 1 drafting.
+DEP-004, DEP-005, DEP-006 are non-blocking for Phase 1 but blocking for P3-006/P3-012 design.
+DEP-013 and DEP-016 are non-blocking for individual doc drafting but blocking for Phase 1
+APPROVED status as a set.
+
+---
+
+UNRESOLVED ITEMS
+---
+UI-P12-001: Whether the dependency map should be maintained as a living document with
+  resolution events logged in the map, or whether resolved items are removed and governance
+  files serve as the record.
+  [REQUIRES INTERNAL DECISION]
+
+UI-P12-002: Phase 2 drafting is expected to surface additional sequencing dependencies.
+  This document must be revisited when Phase 2 work begins. This is an expected update
+  requirement, not an open unknown — noted here so the update is not overlooked.
+  [REQUIRES INTERNAL DECISION]

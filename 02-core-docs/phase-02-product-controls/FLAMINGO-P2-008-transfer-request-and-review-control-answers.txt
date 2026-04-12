@@ -1,0 +1,109 @@
+FLAMINGO-P2-008 Transfer Request and Review Control — Answers
+Last Updated: 2026-04-12 (initial draft)
+
+---
+
+SOURCE FILES USED
+---
+- 00-governance/LOCKED-DECISIONS.md (LD-021–LD-032, LD-039, LD-043)
+- FLAMINGO-P1-004-role-boundaries-final.md (role boundary rules; confusion risks)
+- FLAMINGO-P1-005-authority-model-final.md (AP-001–AP-010; authority matrix §8; role-by-role authority definitions §9)
+- FLAMINGO-P1-009-canonical-transfer-lifecycle-final.md (8-state chain §5; LP-001–LP-010 §6; state table §7; state definitions §8; entry/advancement/evidence rules §9; exception paths §11)
+- FLAMINGO-P2-002-user-and-actor-model-final.md (Investor §9.6; Compliance/Review Operator §9.4; Platform Administrator §9.3; Approved Wallet §9.8)
+- FLAMINGO-P2-003-permission-model-final.md (PP-001–PP-010; §9 actor postures; §10 action matrix Transfer Request and Compliance Review rows; §11.1–§11.3 lifecycle permission rules; §13 prohibited assumptions)
+- FLAMINGO-P2-012-legal-vs-operational-completion-final.md (CP-001–CP-012; Layer 0 taxonomy covering REQUESTED/UNDER_REVIEW/APPROVED; §9 display rules; §11 workflow rules)
+
+---
+
+STRUCTURAL DECISIONS
+---
+- 16-section purpose-built structure; one section beyond the standard 14-section template.
+  Rationale: the standard 14-section template does not distinguish between the review decision paths (§9) and the lifecycle alignment rules (§10) as separate sections. For this document, they must be separate: §9 defines the four decision outcomes (approve, reject, return, escalate) at the control layer; §10 maps those outcomes to specific lifecycle states. Conflating them would make the lifecycle alignment rules harder to cross-reference with P1-009.
+
+- Transfer request object model (§6) as a dedicated section with four subsections.
+  Rationale: the transfer request object is the central artifact of this document. Defining it precisely — what it is, what it is not, what fields it contains, and what preconditions must be met — at the start of the document prevents two common downstream errors: (1) treating submission as approval, and (2) designing a review workflow that references undefined fields. The preconditions table in §6.4 is the product-enforced gate list — it belongs in this document, not in P2-005, because it directly governs what may enter REQUESTED state.
+
+- Four decision options at UNDER_REVIEW (§9.1 table) as the organizing framework for §9.
+  Rationale: prior documents (P2-003) defined the permission classes (Approve, Reject). This document must define what each decision means at the product layer, including the two paths that are not in the action matrix: Return for Correction and Escalation. These are operationally critical. Return for Correction is particularly nuanced because it re-enters the canonical lifecycle (REQUESTED re-entry) rather than exiting it — this must be explicitly distinguished from rejection. The decision options table in §9.1 makes all four paths visible before diving into the per-path definitions.
+
+- Downstream execution boundary explicitly marked in §10.4.
+  Rationale: the control layer document must have a clear boundary statement marking where it stops governing. §10.4 explicitly states that CHAIN_EXECUTED through LEGALLY_COMPLETE are outside the transfer request control layer and governed by P2-012 and Phase 3 specs. Without this, engineers might design the compliance review workbench to have downstream execution controls — that is a scope violation for this document and a risk for the completion layer architecture.
+
+- Exception handling (§12) as six named exception types rather than a generic "exceptions" section.
+  Rationale: each exception type has a different correct handling path. A position discrepancy (§12.4) requires TA records to govern and reconciliation before review can proceed. A transfer restriction issue (§12.3) requires escalation to Reg D counsel. An incomplete package (§12.1) requires Return for Correction. Collapsing these into a generic "exception" section would prevent reviewers from knowing the correct response. Named exception types with explicit handling rules reduce reviewer discretion errors.
+
+- Prohibited control assumptions (§13) as a document-specific prohibited assumptions table.
+  Rationale: P2-003 §13 has the permission-layer prohibited assumptions. P2-012 §12 has the completion-layer prohibited assumptions. P2-008 §13 adds the control-workflow-specific prohibited assumptions — particularly the submission-means-approval and approval-means-execution conflations that are the most common product design errors in this category.
+
+---
+
+CONTROL-PATH DECISIONS
+---
+- Return for Correction is treated as a lifecycle-preserving path (re-enters REQUESTED), not an exit path.
+  Rationale: this is the most important design decision in §9. A rejected request exits the canonical lifecycle permanently — a new request must be submitted. A returned request re-enters REQUESTED and can be corrected and resubmitted in the same request context. This distinction matters for: (a) audit continuity — the correction and original review are linked in the same request record; (b) investor experience — the investor is being asked to fix something, not being told the transfer is denied; (c) operational efficiency — no need to create a new request object from scratch when only a minor correction is needed.
+
+- Escalation holds at UNDER_REVIEW with no state change.
+  Rationale: escalation is a hold, not an advancement or exit. The request stays in UNDER_REVIEW because the reviewer cannot make a decision yet — not because the decision has been made. Creating a separate "ESCALATED" state would violate LP-001 (no additional states without a locked decision change). The escalation is tracked in a record linked to the review record, not as a lifecycle state.
+
+- APPROVED is defined as the terminal state of the transfer request control layer.
+  Rationale: this document governs REQUESTED through APPROVED. Downstream from APPROVED (CHAIN_EXECUTED onward) is governed by P2-012 and Phase 3. The boundary is at APPROVED. This means the document explicitly does NOT define what triggers the APPROVED → CHAIN_EXECUTED transition beyond "Platform Administrator may trigger on-chain execution" — the detailed trigger mechanics belong in P3-004/P3-005.
+
+- PA-assisted submission confirmed as the primary channel; investor self-service submission treated as pending.
+  Rationale: UI-P3-004 (from P2-003) is the unresolved item about investor self-service submission. Until resolved, designing the submission rules around PA-assisted submission is the conservative default. If self-service is confirmed, §7.1 and §7.2 require targeted updates.
+
+---
+
+REVIEW-PATH DECISIONS
+---
+- Review criteria in §8.3 are kept at a product/control-level summary.
+  Rationale: the detailed review criteria (specific Reg D 506(c) transfer restriction conditions, holding period rules, and offering-specific eligibility gates) belong in P2-009 (Admin-Reviewed Transfer Policy). This document establishes the framework (what categories of criteria must be assessed) without inventing criteria that are pending Reg D counsel and Second Street input. Keeping criteria high-level in §8.3 prevents this document from becoming the home for legal/compliance criteria decisions that have not been made.
+
+- Wallet precondition (Approved Wallet on ERC-3643 allowlist) as a submission precondition (§6.4) rather than a review criterion (§8.3).
+  Rationale: wallet allowlist status is a binary platform-enforced gate, not a reviewer judgment call. If the wallet is not on the allowlist, the request cannot be submitted. This is different from an eligibility judgment — it is a technical enforcement gate. Placing it in §6.4 (validity preconditions) rather than §8.3 (review criteria) reflects this: the platform enforces it at submission, not at review.
+
+- KYC/AML and accreditation as both submission preconditions AND review criteria.
+  Rationale: these appear in both §6.4 (must be current at submission) and §8.3 (reviewer must verify they remain current at review time). This dual appearance is intentional — KYC/AML and accreditation status could lapse in the period between submission and review. The submission precondition checks current status at submission time; the review criterion checks that status is still current at review time. The reviewer must not approve a request if KYC/AML or accreditation has lapsed since submission.
+
+---
+
+EXCEPTION-PATH DECISIONS
+---
+- Position discrepancy handling (§12.4) routes to reconciliation before review can proceed.
+  Rationale: LD-017 and LD-040 establish that TA records govern on legal holder conflicts. If Flamingo's registry shows a different position than the TA's records, the transfer request cannot be approved based on Flamingo's position data alone. The reconciliation step must happen first. This prevents a category of compliance risk where a transfer is approved based on stale or incorrect Flamingo operational data.
+
+- Transfer restriction ambiguity routes to escalation, not approval under uncertainty.
+  Rationale: transfer restriction rules under Reg D 506(c) are pending Reg D counsel confirmation. Until confirmed, any transfer restriction ambiguity identified by a reviewer must be escalated rather than resolved unilaterally by approval. Conservative review is required.
+
+- Abandoned/withdrawn requests: withdrawal before UNDER_REVIEW is investor-permitted; after UNDER_REVIEW the review must conclude.
+  Rationale: once a review has been opened, the review record exists and must be concluded through one of the four decision paths. Allowing investor-initiated withdrawal after review opens would create an incomplete review record and a potential audit gap. The reviewer must make a decision. If the investor wishes to abandon, the reviewer may return for correction and the investor can then simply not resubmit.
+
+---
+
+UNRESOLVED ITEMS
+---
+UI-P2-008-001: Role permission matrix CLD-003 — [REQUIRES SECOND STREET INPUT]
+UI-P2-008-002: Transfer restriction review criteria — [REQUIRES REG D COUNSEL INPUT]
+UI-P2-008-003: Transfer request field definitions — [REQUIRES SECOND STREET INPUT]
+UI-P2-008-004: Recipient wallet / transfer type — [REQUIRES INTERNAL DECISION] [REQUIRES SECOND STREET INPUT]
+UI-P2-008-005: Investor self-service submission — [REQUIRES INTERNAL DECISION]
+UI-P2-008-006: Request abandonment / expiry policy — [REQUIRES INTERNAL DECISION]
+UI-P2-008-007: KYC/AML re-verification frequency — [REQUIRES REG D COUNSEL INPUT]
+UI-P2-008-008: Cross-border legal review — [REQUIRES CROSS-BORDER LEGAL INPUT]
+
+All 8 are non-blocking for Phase 2 and Phase 3 drafting.
+UI-P2-008-001 (CLD-003) is the most operationally impactful — it determines exact PA vs. CRO decision scope.
+UI-P2-008-002 (transfer restriction criteria) is required before P2-009 can be fully drafted.
+
+---
+
+ASSUMPTIONS USED
+---
+- The transfer request object includes a "Current Position Reference" field linking to the investor's current holding record in Flamingo's Operational Registry. This is assumed to exist based on P1-009 §9 evidence standards (investor position must be in the registry) and P1-008 (SOT matrix). The exact data model is Phase 3 design (P3-002 Domain Model, P3-003 Data Object Catalog).
+
+- Return for Correction is assumed to be a re-entry into REQUESTED state, not a separate sub-state. This is consistent with LP-001 (no additional canonical states without a locked decision change). The correction context is carried in the review and correction records, not in a new state label.
+
+- Escalation is modeled as a hold-in-UNDER_REVIEW behavior. The escalation record is a linked record, not a new lifecycle state. This is consistent with P1-009 §11 (adjacent exception paths do not create new canonical states).
+
+- The PA-assisted submission path is modeled as equivalent to investor self-submission from a precondition and control perspective — the same preconditions apply, and the same review process follows. The difference is that the submitting actor identity differs (PA vs. investor).
+
+- Review notes are modeled as append-only entries (new notes added, not edited). This is consistent with the audit-trail principle and the write-once audit log model from P2-003 §8.10.

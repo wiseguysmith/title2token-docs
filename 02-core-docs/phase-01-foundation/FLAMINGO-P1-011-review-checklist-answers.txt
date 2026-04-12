@@ -1,0 +1,117 @@
+FLAMINGO-P1-011 Review Checklist — Answers
+Last Updated: 2026-04-11 (initial draft)
+
+---
+
+SOURCE FILES USED
+---
+- 00-governance/LOCKED-DECISIONS.md (LD-001 through LD-043 — all checks anchored here)
+- FLAMINGO-P1-002-locked-decisions-final.md
+- FLAMINGO-P1-003-canonical-glossary-final.md (prohibited terminology; canonical term set; resolution-owner tags)
+- FLAMINGO-P1-004-role-boundaries-final.md (role definitions; boundary rules; confusion risks)
+- FLAMINGO-P1-005-authority-model-final.md (authority principles AP-001 through AP-010)
+- FLAMINGO-P1-006-system-context-final.md (system boundaries; white-label context; prohibited assumptions)
+- FLAMINGO-P1-007-v1-scope-boundary-final.md (in-scope; out-of-scope; deferred; boundary rules)
+- FLAMINGO-P1-008-source-of-truth-matrix-final.md (STP-001 through STP-010; conflict rules)
+- FLAMINGO-P1-009-canonical-transfer-lifecycle-final.md (8-state chain; completion boundaries; ambiguity controls)
+- FLAMINGO-P1-010-assumptions-and-unknowns-policy-final.md (classification model; prohibited behaviors)
+- FLAMINGO-P1-012-dependency-map-final.md (dependency principles; gating relationships)
+- 01-doc-operations/rules/NAMING-CONVENTION.md (naming rule for main docs vs. workpack files)
+
+---
+
+STRUCTURAL DECISIONS
+---
+- Departed from standard 14-section core doc template; used a purpose-built 14-section structure appropriate for a review and quality-control document
+  Rationale: standard sections (e.g., "State / Workflow / Controls") do not map to a checklist document; the review categories, check items, and outcome definitions require their own structure
+
+- Three-tier reference model used in Section 5 (Governance Anchors / Foundation Reference Documents / Process Standards)
+  Rationale: cleanest way to explain why some check failures are automatic FAILs (Tier 1) while others are flags that need revision (Tier 2) and others are process corrections (Tier 3)
+
+- Mandatory checks written as yes/no questions with YES = pass
+  Rationale: concrete enough to actually use during a review; not open to interpretation; consistent with how functional checklists work in regulated environments
+
+- Conditional checks grouped by subject matter (investor eligibility / data storage / transfer restriction / white-label / reconciliation / TA integration / cross-border)
+  Rationale: not every document discusses every topic; reviewers should apply only the relevant sub-sections; this avoids "not applicable" filling up review records
+
+- Review outcomes kept to 5 codes — not a sliding scale
+  Rationale: outcomes must be clearly differentiated; too many gradations create ambiguity about when a document is actually safe to use
+
+---
+
+REVIEW CATEGORIES SELECTED (12)
+---
+CAT-01 Locked-Decision Consistency — anchors to LD-001–LD-043
+CAT-02 Glossary / Terminology Consistency — anchors to P1-003
+CAT-03 Role-Boundary Consistency — anchors to P1-004
+CAT-04 Authority-Model Consistency — anchors to P1-005
+CAT-05 System-Context Consistency — anchors to P1-006
+CAT-06 Scope-Boundary Consistency — anchors to P1-007
+CAT-07 Source-of-Truth Consistency — anchors to P1-008
+CAT-08 Lifecycle Consistency (conditional) — anchors to P1-009
+CAT-09 Assumptions and Unknowns Handling — anchors to P1-010
+CAT-10 Dependency Handling — anchors to P1-010 + P1-012
+CAT-11 Naming and Package Integrity — anchors to NAMING-CONVENTION.md
+CAT-12 Implementation-Readiness Discipline — anchors to phase-level scope distinction
+
+---
+
+REVIEW OUTCOME MODEL
+---
+PASS / READY: all mandatory checks pass; safe to advance to READY or hand downstream
+PASS / OPEN ITEMS: passes; non-blocking open items correctly handled; stays at DRAFTED
+PARTIAL / NEEDS REVISION: conditional failures; no Tier 1 contradiction; revision needed before handoff
+BLOCKED / NEEDS INPUT: mandatory check failure requiring external input; advance blocked
+FAIL / CONTRADICTION: Tier 1 failure; contradicts locked decision; must be corrected before any other step
+
+Note: "PASS / READY" and "PASS / OPEN ITEMS" are differentiated because a document with open items may be safe to use downstream (Phase 2 authors can acknowledge the open items) but is not yet READY for external or legal review.
+
+---
+
+ESCALATION MODEL
+---
+7 escalation types defined:
+1. Legal review needed — [REQUIRES REG D COUNSEL INPUT] / [REQUIRES CROSS-BORDER LEGAL INPUT]
+2. Vendor confirmation needed — [REQUIRES SECURITIZE CONFIRMATION]
+3. Internal decision needed — [REQUIRES INTERNAL DECISION] / [REQUIRES SECOND STREET INPUT]
+4. Terminology / glossary conflict — author corrects; new term requires glossary addition before use
+5. Architectural contradiction — project owner review required before silent Phase 3 change
+6. Scope inflation — out-of-scope; requires documented scope change
+7. Completion-layer collapse — Tier 1-adjacent; return to author immediately
+
+Completion-layer collapse (type 7) is treated with the same urgency as a Tier 1 failure even though it is a process failure rather than a direct locked-decision contradiction. Reason: collapsing CHAIN_EXECUTED / TA_RECORDED / LEGALLY_COMPLETE is the single most dangerous documentation error in this domain and could affect investor-facing legal representations.
+
+---
+
+COMMON FAILURE PATTERNS — SELECTION RATIONALE
+---
+15 failure patterns selected. Sources:
+- FP-01, FP-02: directly from P1-004 Section 10 (role confusion risks)
+- FP-03: from P1-008 (blockchain ≠ legal books)
+- FP-04, FP-05, FP-06, FP-07: from P1-009 Section 12 (ambiguity controls) and P1-003 Section 7 (prohibited terminology)
+- FP-08: from P1-008 Section 8 (operational registry interpretation note)
+- FP-09: from P1-010 Section 8.4 (open unknowns) and Section 9.3 (conservative wording rule)
+- FP-10, FP-11: from P1-007 Section 4 (scope classification model) and P1-012 (phase gating)
+- FP-12: from P1-010 Section 13 (prohibited behaviors #1)
+- FP-13: from P1-007 and LD-023, LD-029 (admin-reviewed only)
+- FP-14: from P1-006 Section 13 (white-label constraints)
+- FP-15: from P1-002 UI-005 and P1-006 UI-P6-005 (Costa Rica cross-border)
+
+---
+
+ASSUMPTIONS USED
+---
+- "Implementation-Readiness Discipline" (CAT-12) is treated as a process-tier check, not a foundation-tier check. Rationale: phase leakage is a process/editorial failure, not a locked-decision violation — but it still requires correction before handoff.
+- The checklist is written to be usable by a human reviewer working alone (author self-review) as well as by a distinct reviewer. The review outcome system does not require a multi-person workflow to be useful.
+- Companion files (prompt, answers, review, open-items) are not themselves subject to the checklist's mandatory checks — they are provenance records, not content documents. The checklist covers main documents. CAT-11 checks verify that companion files exist and are correctly named/populated.
+- The three-tier model is a reviewer's mental model, not a separate governance document. It is included in the checklist for clarity but does not itself constitute a new policy layer.
+
+---
+
+UNRESOLVED ITEMS
+---
+UI-P11-001: Additional Phase 2 conditional checks — [REQUIRES INTERNAL DECISION]
+UI-P11-002: Formal peer-review workflow vs. author self-review — [REQUIRES SECOND STREET INPUT]
+UI-P11-003: Whether checklist applies to companion documents — [REQUIRES INTERNAL DECISION]
+
+All 3 are non-blocking for Phase 1 use and Phase 2 drafting initiation.
