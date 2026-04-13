@@ -1,0 +1,12 @@
+export const TRANSFER_LIFECYCLE_STATES = [
+  "REQUESTED",
+  "UNDER_REVIEW",
+  "APPROVED",
+  "CHAIN_EXECUTED",
+  "TA_INSTRUCTION_SENT",
+  "TA_ACKNOWLEDGED",
+  "TA_RECORDED",
+  "LEGALLY_COMPLETE",
+] as const;
+
+export type TransferLifecycleState = (typeof TRANSFER_LIFECYCLE_STATES)[number];
