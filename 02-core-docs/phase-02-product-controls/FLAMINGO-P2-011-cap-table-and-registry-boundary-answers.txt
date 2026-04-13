@@ -1,1 +1,83 @@
-FLAMINGO-P2-011-cap-table-and-registry-boundary Cap Table And Registry Boundary — Answers
+FLAMINGO-P2-011 Cap Table and Registry Boundary — Design Rationale
+
+===================================================================
+QUESTION 1: Why a three-layer model (Operational Registry / Base token evidence / TA legal records)?
+===================================================================
+
+Three distinct layers exist because three distinct authorities exist, each with its own scope:
+
+1. Flamingo Operational Registry — authoritative for operational platform state (LD-013). Covers what Flamingo knows: workflow state, allocation decisions, transfer lifecycle positions, TA signal receipts. Its authority is operational, not legal.
+
+2. Base / ERC-3643 token balance evidence — authoritative for on-chain state and transfer restriction enforcement (LD-041). Covers what actually exists on-chain: token balances, allowlist status, contract pause state. Its authority is technical, not legal.
+
+3. Securitize / TA legal records — authoritative for legal holder-of-record determination (LD-011, LD-040). Covers who legally owns the security interest. Its authority is legal, not operational or technical.
+
+Collapsing any two of these layers would create a false equivalence:
+- Operational Registry ≠ legal record: LD-015 makes Flamingo's registry an operational copy
+- Token balance ≠ legal ownership: CHAIN_EXECUTED ≠ LEGALLY_COMPLETE (P2-012)
+- TA signals ≠ Flamingo operational triggers: TA signal receipt updates Flamingo state but is not the same as Flamingo making a legal determination
+
+The three-layer model makes these distinctions explicit and citeable by later documents.
+
+===================================================================
+QUESTION 2: Why four certainty levels (allocated / minted / TA-acknowledged / TA-recorded)?
+===================================================================
+
+A binary "owned / not owned" display would be both inaccurate and dangerous. The actual operational journey involves four distinct confirmation moments, each with different legal weight:
+
+1. Allocation (SS-003+): admin has made a platform-level decision. No tokens exist yet. Not a legal event.
+2. Minting (SS-007 / CHAIN_EXECUTED): tokens exist on-chain. Technical event. Not a legal event.
+3. TA-Acknowledged (TA_ACKNOWLEDGED): TA confirmed receipt of instruction. Acknowledgment of receipt only — not recordation.
+4. TA-Recorded (TA_RECORDED): TA has recorded the transfer in legal books-and-records. The legally significant event.
+
+Showing all four allows operators to understand the platform state accurately. Conflating them would cause:
+- False legal certainty signals at the allocation or minting stage
+- Confusion between TA_ACKNOWLEDGED and TA_RECORDED (a known failure pattern per P1-011 §7, item 6)
+- Inability to identify divergence or lag between operational and legal state
+
+===================================================================
+QUESTION 3: Why is divergence treated as "expected" rather than as an error?
+===================================================================
+
+Workflow timing means divergence is structurally normal. After a TA instruction is sent, there is a latency period before the TA processes and signals back. During that window, the Flamingo Operational Registry shows TA_INSTRUCTION_SENT, but the TA's records haven't yet been updated to reflect the transfer. This is not an error — it is the normal in-flight state.
+
+Treating all divergence as errors would flood the reconciliation queue with false positives and obscure actual discrepancies that require attention.
+
+The model distinguishes:
+- Expected lag: normal; display "pending TA confirmation"; no escalation yet
+- Persistent lag beyond threshold: escalate to P2-014 reconciliation [pending Securitize confirmation of threshold]
+- Detectable mismatch: conflicting values between layers; always escalate
+
+===================================================================
+QUESTION 4: Why is the conservative display posture (RC-010, DV-001) a standing rule rather than a context-specific one?
+===================================================================
+
+Because the consequences of displaying false legal certainty are more severe than the consequences of displaying conservative uncertainty.
+
+If Flamingo displays "TA-Recorded" when it has only received TA_ACKNOWLEDGED, an investor or admin may act on that display as if the transfer is legally complete — and that assumption may be legally wrong.
+
+If Flamingo displays "Pending TA confirmation" when the TA has already recorded, the consequence is a brief operational delay — easily corrected when the signal arrives.
+
+The asymmetry in consequences supports a conservative default as the standing rule, not a context-dependent judgment call. This is consistent with P1-010 (Assumptions and Unknowns Policy) and P2-012 (completion boundary language rules).
+
+===================================================================
+QUESTION 5: Why are OR-001 through OR-008 defined as record categories rather than specific data objects?
+===================================================================
+
+This is a Phase 2 product/control document. Specific data object definitions (field names, types, schema) belong in Phase 3 (P3-003 Data Object Catalog). At this layer, naming the eight operational record categories serves two purposes:
+1. Establishes the canonical vocabulary that P2-013 (audit events), P2-014 (reconciliation), and Phase 3 documents can reference
+2. Defines what belongs in the Operational Registry without prescribing implementation-level schema decisions prematurely
+
+===================================================================
+UNRESOLVED ITEMS SUMMARY
+===================================================================
+
+UI-P2-011-001: TA signal format and expected lag window [REQUIRES SECURITIZE CONFIRMATION] (CLD-001)
+UI-P2-011-002: Divergence escalation threshold [REQUIRES SECURITIZE CONFIRMATION] (CLD-004)
+UI-P2-011-003: TA readback data scope [REQUIRES SECURITIZE CONFIRMATION] (CLD-001)
+UI-P2-011-004: Cap-table view access permissions [REQUIRES SECOND STREET INPUT] (CLD-003)
+UI-P2-011-005: Offering-level aggregate reporting [REQUIRES SECOND STREET INPUT]
+UI-P2-011-006: Regulatory cap table obligations [REQUIRES REG D COUNSEL INPUT]
+
+All 6 are non-blocking for Phase 2 and Phase 3 drafting continuation.
+The three Securitize items (UI-P2-011-001, 002, 003) are on the same CLD-001/CLD-004 resolution path.

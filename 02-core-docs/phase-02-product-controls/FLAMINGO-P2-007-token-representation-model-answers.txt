@@ -1,1 +1,100 @@
-FLAMINGO-P2-007-token-representation-model Token Representation Model — Answers
+FLAMINGO-P2-007 Token Representation Model — Design Rationale
+
+===================================================================
+QUESTION 1: Why is the token defined as "on-chain evidence" rather than as the security instrument itself?
+===================================================================
+
+Because the legal security instrument requires TA recordation; the token on its own does not constitute legal title.
+
+Under Reg D 506(c), the legal transfer of a security interest is recorded by the transfer agent in its books-and-records. Securitize performs this function for Flamingo v1 (LD-011, LD-040). The token on Base is the technical representation of the participation allocation — it is the mechanism by which the restriction-enforced, on-chain participation instrument is held and transferred.
+
+Describing the token as the security instrument would imply that:
+1. Holding the token = being the legal holder of record (false — requires TA recordation)
+2. Minting the token = legal completion of the issuance (false — CHAIN_EXECUTED ≠ LEGALLY_COMPLETE)
+3. The TA's books-and-records are a secondary confirmation of what the token already established (false — LD-040 gives Securitize-wins authority on legal holder disputes)
+
+"On-chain evidence of participation allocation" is the correct characterization at the product layer. It is technically accurate (the token exists on-chain and reflects an allocation decision) without overclaiming legal authority.
+
+===================================================================
+QUESTION 2: Why are the ERC-3643 contract enforcement boundary and Flamingo's operational eligibility controls described as complementary rather than redundant?
+===================================================================
+
+Because they enforce different things at different layers, and neither substitutes for the other.
+
+ERC-3643 at the contract level enforces:
+- Whether a wallet address is on the allowlist (technical fact, on-chain)
+- Whether the contract is paused (technical fact, on-chain)
+- Whether the transfer restriction rules encoded in the contract permit this specific transfer
+
+ERC-3643 does NOT verify:
+- Whether the wallet belongs to an accredited investor (that's an offchain eligibility determination)
+- Whether the investor has passed KYC/AML (offchain provider determination)
+- Whether the transfer was approved through the admin review workflow (Flamingo operational control)
+
+Flamingo's operational eligibility controls (P2-005) establish the offchain eligibility conditions. Only after an investor passes those conditions is their wallet admitted to the ERC-3643 allowlist. So the sequence is:
+
+1. Investor passes eligibility checks (accreditation, KYC/AML) — Flamingo operational layer
+2. Wallet registered and admitted to ERC-3643 allowlist — Flamingo operational + on-chain technical
+3. Transfer approved through admin review — Flamingo operational
+4. On-chain transfer executes — ERC-3643 enforces allowlist at execution time
+
+If the operational layers fail but somehow a wallet is admitted to the allowlist, the contract will allow a transfer that Flamingo's operational controls should have blocked. The design intention is that the operational eligibility layer feeds the allowlist — they are complementary controls, not alternatives.
+
+===================================================================
+QUESTION 3: Why does the Approved Wallet model require explicit wallet admission confirmation before token transfers can execute?
+===================================================================
+
+Because the ERC-3643 allowlist is the on-chain enforcement gate for transfer eligibility (LD-041), and wallet admission to the allowlist is the technical pre-condition for token receipt.
+
+The Approved Wallet model links:
+- The investor identity (offchain — Flamingo Operational Registry)
+- The wallet address (identifier — registered in Flamingo)
+- The on-chain allowlist admission (technical fact — Base / ERC-3643)
+
+Without step 3 (on-chain allowlist admission confirmed), the token cannot be transferred to that wallet even if Flamingo's operational state shows the allocation as approved and the minting as authorized.
+
+This is why the wallet admission confirmation (EC-010 audit event) is a separate event from the wallet registration (EC-004 audit event). The distinction preserves the boundary between Flamingo's operational record of the wallet registration and the on-chain fact of allowlist admission.
+
+If these were collapsed, Flamingo might show "wallet approved" when the on-chain admission hasn't been confirmed — creating a false certainty signal and a potential operational failure if minting is attempted before allowlist admission is finalized.
+
+===================================================================
+QUESTION 4: Why is §10 (onchain/offchain boundary) described as enforced rather than derived?
+===================================================================
+
+Because LD-038 is a locked decision and the ERC-3643 architecture on Base is a locked standard. The boundary is not a product design judgment that can be reconsidered case-by-case — it is a fixed constraint.
+
+"Enforced not derived" means:
+- The decision about what lives on-chain was made once (locked decisions LD-035, LD-036, LD-038) and is not re-examined per-use-case
+- Putting sensitive personal data on-chain is not an option even if technically possible
+- The boundary applies uniformly across all offerings and all investors
+
+This framing is important because the alternative — "derived" from context — would imply that in some circumstances (e.g., for a specific offering configuration or investor type) the boundary might shift. It doesn't. The onchain/offchain boundary is architectural, not contextual.
+
+===================================================================
+QUESTION 5: Why are CHAIN_EXECUTED and LEGALLY_COMPLETE separated in the token lifecycle model?
+===================================================================
+
+Because they are produced by different authorities at different points in time, and conflating them has material legal consequences.
+
+CHAIN_EXECUTED: Produced by the Base blockchain. The minting transaction was confirmed on-chain. Token exists. Technical fact.
+
+LEGALLY_COMPLETE: Produced when Securitize has recorded the transfer in its legal books-and-records (TA_RECORDED state) and Flamingo advances to LEGALLY_COMPLETE. Legal fact.
+
+Between these two events, the investor has tokens in their wallet but is not yet the legal holder of record per the TA's books. Displaying the token balance as "complete" or "legally owned" before LEGALLY_COMPLETE is reached would be false.
+
+LD-042 (REDEEMED ≠ LEGALLY_COMPLETE) makes the same point about the redemption end-state. REDEEMED does not mean the underlying security obligation was legally completed — it means a redemption process was initiated or completed at the platform layer. Legal completion at the TA layer is separate.
+
+The token lifecycle model in §8 makes these stages explicit and sequential so that downstream product display (§14), audit logging (P2-013), and the Operational Registry (P2-011) can all reference the correct stage without collapsing them.
+
+===================================================================
+UNRESOLVED ITEMS SUMMARY
+===================================================================
+
+UI-P2-007-001: TA-driven token restriction triggers [REQUIRES SECURITIZE CONFIRMATION] (CLD-001)
+UI-P2-007-002: Token issuance coordination with TA [REQUIRES SECURITIZE CONFIRMATION] (CLD-001)
+UI-P2-007-003: Token-as-security-instrument characterization [REQUIRES REG D COUNSEL INPUT]
+UI-P2-007-004: Investor-facing token display [REQUIRES SECOND STREET INPUT] (CLD-003)
+UI-P2-007-005: Redemption token mechanics scope [REQUIRES SECOND STREET INPUT]
+
+All 5 are non-blocking for Phase 2 and Phase 3 drafting continuation.
+UI-P2-007-001 and UI-P2-007-002 are on the same CLD-001 Securitize confirmation path as UI-P2-011-001/003 and UI-P2-013-001.

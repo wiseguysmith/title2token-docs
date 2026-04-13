@@ -1,1 +1,113 @@
-FLAMINGO-P2-010-transfer-exception-handling Transfer Exception Handling — Answers
+FLAMINGO-P2-010 Transfer Exception Handling — Design Rationale
+
+===================================================================
+QUESTION 1: Why are there ten exception classes rather than a simpler grouped model?
+===================================================================
+
+The ten classes correspond to ten genuinely distinct conditions that require different handling rules. Grouping them would obscure the differences that matter operationally.
+
+The key distinctions:
+
+EX-001 (precondition invalidity) vs. EX-002 (insufficient allocation): Both are pre-execution failures, but their resolution paths differ. EX-001 may resolve when the investor restores eligibility; EX-002 resolves only if capacity becomes available. Grouping them would require one handling rule to cover both paths.
+
+EX-003 (review stall) is distinct from all other classes: it is not a failure of a technical step but a failure of the review process itself — an admin who hasn't acted. Resolution is operational reassignment, not technical remediation.
+
+EX-004 (chain execution failure) vs. EX-005 (TA instruction rejected): Both are execution failures, but they occur at different layers with different resolution owners. EX-004 can potentially be retried by Flamingo; EX-005 immediately becomes EX-010 because the TA has already received and rejected an instruction.
+
+EX-006 (TA signal timeout) is distinct from EX-005 (TA instruction rejected): EX-006 means nothing has been heard; EX-005 means a negative signal was received. These require different responses — EX-006 begins as inquiry/hold; EX-005 is immediate escalation.
+
+EX-007 (on-chain/registry divergence) vs. EX-008 (wallet revocation mid-transfer): Both involve on-chain state inconsistency, but EX-008 is a specific and immediately actionable condition (wallet was revoked; transfer cannot execute) while EX-007 is a broader divergence that requires investigation before action.
+
+EX-009 (forced correction) and EX-010 (post-TA-instruction escalation): EX-009 is a class; EX-010 is a trigger condition that wraps other classes. EX-010 exists because the presence or absence of a sent TA instruction is the most consequential boundary in exception handling — it determines whether Flamingo can resolve unilaterally or must escalate.
+
+===================================================================
+QUESTION 2: Why does EX-010 exist as a separate class rather than as a rule within each other class?
+===================================================================
+
+EX-010 is a meta-trigger, not a standalone exception type. But it is defined as a class for two reasons:
+
+1. Auditability: When an EC-012 event is generated for a post-TA-instruction exception, the audit record needs to identify that EX-010 escalation was triggered. If EX-010 were just a rule embedded in other classes, there would be no canonical code to reference in the audit record.
+
+2. Handling consistency: The handling rule for EX-010 is identical regardless of which underlying class triggered it — hold, escalate to Securitize, engage legal counsel if needed. By making it a class, the handling rule is defined once and applied consistently.
+
+An exception that is simultaneously EX-005 and EX-010 is captured as both: the EC-012 event records the underlying class (EX-005 — TA instruction rejected) and the escalation trigger (EX-010 — post-TA-instruction condition). P3-013 implements the escalation routing.
+
+===================================================================
+QUESTION 3: Why is EH-002 (no lifecycle shortcuts via exception resolution) treated as absolute?
+===================================================================
+
+Because the 8-state canonical chain and the completion boundary rules are locked decisions (LD-022, LD-025–LD-028). Exception handling is an operational control within the platform — it is not a mechanism for the platform to override its own governance rules.
+
+If exception resolution could shortcut the lifecycle, then:
+- A forced correction could advance a transfer to LEGALLY_COMPLETE without TA_RECORDED having occurred
+- An exception "resolution" could create the appearance of legal completion where none exists
+- The completion boundary locks would be effectively unenforceable against a motivated admin with exception resolution authority
+
+EH-002 makes this impossible by defining resolution as "return to a valid state or hold" — never advance past an unsatisfied state. The only way LEGALLY_COMPLETE is reached is by satisfying TA_RECORDED through the normal TA process. No exception resolution path changes that.
+
+===================================================================
+QUESTION 4: Why is EH-006 (post-TA-instruction always escalates) an absolute rule rather than context-dependent?
+===================================================================
+
+Because Flamingo does not know what the transfer agent has done with an instruction once it is sent.
+
+After TA_INSTRUCTION_SENT, two scenarios are possible:
+1. The TA has not yet processed the instruction
+2. The TA has processed the instruction (possibly partially or fully)
+
+Flamingo has no guaranteed way to determine which scenario is true at the time an exception is identified. If Flamingo were to unilaterally "cancel" a transfer in its Operational Registry while the TA is simultaneously processing the instruction, the result would be:
+- Flamingo's registry showing the transfer cancelled
+- The TA completing the legal recordation
+- The investor's legal holder-of-record status advanced while Flamingo's records show cancelled
+
+This is a divergence that has legal consequences for the investor and creates a serious compliance problem.
+
+The conservative rule — any post-TA-instruction exception escalates to Securitize — prevents this. Until Securitize confirms what reversal/cancellation mechanisms exist (UI-P2-010-004), the correct posture is: we cannot resolve this unilaterally.
+
+===================================================================
+QUESTION 5: Why is EX-007 (on-chain/registry divergence) not automatically resolved by updating the registry to match on-chain state?
+===================================================================
+
+Because the divergence may indicate a problem in either direction. Two scenarios:
+
+Scenario A: The Operational Registry missed an on-chain event (e.g., a chain-executed event was not logged). In this case, updating the registry to match on-chain state is correct — and should be documented as a correction.
+
+Scenario B: An on-chain event occurred that the Flamingo platform did not authorize (e.g., a token transfer executed on-chain that does not correspond to an APPROVED transfer in the workflow). In this case, updating the registry to match on-chain state would silently accept an unauthorized transaction.
+
+If the handling rule were "update registry to match on-chain," Scenario B would never be caught — the unauthorized transaction would be retroactively accepted.
+
+The correct rule is: detect the divergence, investigate which scenario it is, then take the appropriate action. LD-041 (Base-wins) means on-chain state is authoritative for restriction enforcement — but it does not mean all on-chain events should be retroactively accepted into the registry without investigation.
+
+===================================================================
+QUESTION 6: Why are transfer exceptions and reconciliation breaks (P2-014) defined as distinct?
+===================================================================
+
+They have different scopes and different detection mechanisms:
+
+Transfer exceptions are detected per-transfer during processing. An admin reviewing a transfer, or a system event during processing, identifies that something is wrong with this specific transfer. The detection is synchronous with the transfer workflow.
+
+Reconciliation breaks are identified during a reconciliation run — a comparison of Flamingo's Operational Registry against TA state or on-chain state across a population of records. Detection is periodic and aggregate.
+
+A single EX-006 timeout may or may not be visible in a reconciliation run, depending on timing. A reconciliation break may surface a pattern of EX-007 divergences that were individually noticed but not fully resolved.
+
+Defining them separately allows:
+- Transfer exceptions to be handled per-transfer by the transfer administrator
+- Reconciliation breaks to be handled as a separate reconciliation/operations function
+- The escalation hand-off between the two to be explicit (§13)
+
+Without the separation, an EX-006 exception that was escalated and remains open could be double-counted or re-processed during a reconciliation run, creating confusion about which workflow is responsible for resolution.
+
+===================================================================
+UNRESOLVED ITEMS SUMMARY
+===================================================================
+
+UI-P2-010-001: Regulatory reporting obligations for failed/cancelled transfers [REQUIRES REG D COUNSEL INPUT]
+UI-P2-010-002: Partial allocation on EX-002 resolution [REQUIRES SECOND STREET INPUT]
+UI-P2-010-003: Forced correction authority at TA_INSTRUCTION_SENT or later [REQUIRES REG D COUNSEL INPUT]
+UI-P2-010-004: TA-side cancellation and reversal mechanism [REQUIRES SECURITIZE CONFIRMATION] (CLD-001)
+UI-P2-010-005: Exception timeout thresholds [REQUIRES SECOND STREET INPUT (item a); REQUIRES SECURITIZE CONFIRMATION (items b, c)] (CLD-004)
+UI-P2-010-006: Escalation role assignments [REQUIRES SECOND STREET INPUT] (CLD-003)
+UI-P2-010-007: Investor notification on exception outcomes [REQUIRES SECOND STREET INPUT]
+
+All 7 are non-blocking for Phase 2 and Phase 3 drafting continuation.
+UI-P2-010-004 and UI-P2-010-005 (b, c) are on the same CLD-001/CLD-004 Securitize resolution path as UI-P2-011-001/002 and UI-P2-013-001/002.

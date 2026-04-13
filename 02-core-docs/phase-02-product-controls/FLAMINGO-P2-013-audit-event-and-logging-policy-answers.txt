@@ -1,1 +1,119 @@
-FLAMINGO-P2-013-audit-event-and-logging-policy Audit Event And Logging Policy — Answers
+FLAMINGO-P2-013 Audit Event and Logging Policy — Design Rationale
+
+===================================================================
+QUESTION 1: Why thirteen event categories rather than a simpler model?
+===================================================================
+
+Thirteen categories are the minimum needed to cover every significant domain of platform activity without collapsing distinctions that matter for audit defensibility.
+
+The breakdown reflects the upstream workflow document structure directly:
+
+- EC-001: Offering intake/onboarding — driven by P2-004 (OS-001–OS-006 transitions)
+- EC-002: Configuration events — offering, compliance, and tenant configuration changes
+- EC-003: Eligibility/status events — driven by P2-005 (ES-001–ES-006 transitions, provider results)
+- EC-004: Wallet events — wallet registration and allowlist confirmation lifecycle
+- EC-005: Subscription/allocation events — driven by P2-006 (SS-001–SS-007 transitions)
+- EC-006: Transfer request events — driven by P2-008 (request submission and routing)
+- EC-007: Review decision events — driven by P2-009 (approval/rejection/escalation/return/correction)
+- EC-008: Lifecycle/state transition events — driven by P1-009 (all 8 canonical transfer chain states)
+- EC-009: External/vendor status events — Securitize TA signals, KYC/AML and accreditation provider results
+- EC-010: Chain-evidence events — Base/ERC-3643 on-chain events
+- EC-011: Registry/position events — driven by P2-011 (OR-001–OR-008 Operational Registry updates)
+- EC-012: Reconciliation/exception events — divergence detection and break resolution triggers
+- EC-013: User/permission/admin events — session, identity, access control
+
+A simpler model (e.g., five categories) would collapse EC-006/007/008 into one bucket, losing the critical distinction between request submission (EC-006), reviewer decision (EC-007), and lifecycle state transition (EC-008). That distinction is essential for review-of-review defensibility.
+
+===================================================================
+QUESTION 2: Why five source classifications?
+===================================================================
+
+The five source classifications (ES-INT, ES-ACTOR, ES-REVIEW, ES-EXT, ES-CHAIN) map directly to the three authority planes and make the certainty posture of each event explicit at the point of capture.
+
+ES-INT (internally generated) and ES-ACTOR (actor-triggered) cover events fully within Flamingo's operational control.
+
+ES-REVIEW is a sub-type of actor-triggered specifically for review function decisions. It is broken out because EC-007 events are the audit core of the admin-reviewed transfer policy (P2-009) — they warrant a distinct classification that makes the review-decision nature unambiguous.
+
+ES-EXT (externally ingested) covers all signals received from outside Flamingo: Securitize TA signals, KYC/AML vendor results, accreditation provider results. Classifying these as externally ingested makes explicit that Flamingo's record is of receipt only — not independent verification or legal certification.
+
+ES-CHAIN (chain-derived) covers Base blockchain observations. This classification aligns with LD-041 (Base-wins on transfer restriction enforcement) — the chain is authoritative for its technical domain — while preserving the critical boundary that chain state is not legal completion and does not determine legal holder-of-record.
+
+The five-classification model mirrors P2-011's three-layer model (Operational Registry / Base / TA) and extends it to include internal platform generation and review decisions as distinct operational categories.
+
+===================================================================
+QUESTION 3: Why is the immutability rule (AL-003) absolute rather than allowing correction-in-place?
+===================================================================
+
+Audit logs that allow deletion or in-place overwrite cannot be trusted for defensibility. If a log entry can be overwritten, then any log entry showing a decision or state at a point in time is suspect — it may have been changed after the fact.
+
+The operational consequence of AL-003 is that incorrect entries are corrected by appending amendment events (EC-012) that reference the original entry. The original entry remains in the log, and the correction history is visible. This approach:
+
+1. Protects against after-the-fact revision of review decisions (EC-007)
+2. Preserves the historical record of what was believed to be true at a given time, even if that belief turned out to be wrong
+3. Creates a transparent correction history rather than hiding errors
+4. Aligns with standard audit log integrity requirements
+
+The cost is that the log may contain entries that are known to be incorrect, alongside their corrections. This is acceptable — the correction record is the right response to an incorrect entry, not deletion.
+
+===================================================================
+QUESTION 4: Why are EC-007 review decision events subject to heightened minimum fields?
+===================================================================
+
+Review decision events are the operational core of P2-009 (Admin-Reviewed Transfer Policy). Every transfer that moves through UNDER_REVIEW is subject to a review decision, and every approval or rejection creates a log entry that may later be examined under audit or compliance review.
+
+The heightened requirements (decision type, reviewing actor identity, system-assigned timestamp, object state at decision time, rejection reason class, escalation target, notes/justification for corrections) are the minimum needed to reconstruct the decision context:
+
+- Who made the decision (reviewing actor identity)
+- When they made it (system-assigned timestamp)
+- What they were deciding on (object state at decision time)
+- What they decided (decision type)
+- Why they rejected, if applicable (rejection reason class from P2-009 C-REJ-nnn)
+- Why they deviated, if applicable (notes/justification for corrections or policy deviations)
+
+Without these fields, an EC-007 entry that says "Transfer approved" by "Admin #4" at timestamp X is barely auditable. With them, the full decision context is preserved.
+
+===================================================================
+QUESTION 5: Why does logging TA_ACKNOWLEDGED create both an EC-008 and an EC-009 entry?
+===================================================================
+
+These are two distinct events that happen to coincide in time:
+
+EC-008 (lifecycle/state transition event): The transfer reaches TA_ACKNOWLEDGED state in Flamingo's operational model. This is a platform-internal state transition — Flamingo's Operational Registry is updated.
+
+EC-009 (external/vendor status event): Flamingo received a signal from Securitize. This is an externally ingested event — Flamingo logged what came in from outside.
+
+Collapsing these would conflate the platform's operational state change with the external signal that triggered it. They must remain separate because:
+
+1. The EC-008 entry documents that Flamingo's operational model transitioned to TA_ACKNOWLEDGED state
+2. The EC-009 entry documents that an external signal was received from Securitize, classified as ES-EXT
+3. If the external signal is ever disputed, the EC-009 entry (what was received, from whom, when) is the forensic record; the EC-008 entry (what state was reached in the platform) is the operational record
+
+The same compound-event logic applies to TA_RECORDED.
+
+===================================================================
+QUESTION 6: Why is sensitive personal data excluded from log entry bodies (AL-009)?
+===================================================================
+
+LD-038 (sensitive personal/compliance data stays offchain) establishes the rule. AL-009 applies it specifically to audit log entries.
+
+The operational implication is: log entries that relate to investor eligibility (EC-003), wallet events (EC-004), or subscription events (EC-005) must reference the investor record by ID rather than embed investor name, tax identification, address, or similar sensitive data in the log body.
+
+This serves two purposes:
+1. It enforces the LD-038 rule consistently — sensitive data exists in one place (the investor record, offchain), not spread across log entries
+2. It makes log entries that reference investors lower-sensitivity — the log body contains event type and result classification, not personal data. This makes log access controls simpler and reduces the risk of inadvertent sensitive data exposure through audit display surfaces
+
+Where a log entry must identify an investor, the investor record ID is the correct reference. The sensitive underlying data is available to authorized actors through the investor record, not through the audit log.
+
+===================================================================
+UNRESOLVED ITEMS SUMMARY
+===================================================================
+
+UI-P2-013-001: Securitize TA event signal semantics [REQUIRES SECURITIZE CONFIRMATION] (CLD-001)
+UI-P2-013-002: Reconciliation signal timing and SLA [REQUIRES SECURITIZE CONFIRMATION] (CLD-004)
+UI-P2-013-003: Regulatory audit retention and reporting obligations [REQUIRES REG D COUNSEL INPUT]
+UI-P2-013-004: Provider event classification [REQUIRES VENDOR SELECTION]
+UI-P2-013-005: Cross-border logging implications [REQUIRES CROSS-BORDER LEGAL INPUT]
+UI-P2-013-006: Audit log access role definitions [REQUIRES SECOND STREET INPUT] (CLD-003)
+
+All 6 are non-blocking for Phase 2 and Phase 3 drafting continuation.
+UI-P2-013-001 and UI-P2-013-002 are on the same CLD-001/CLD-004 resolution path as UI-P2-011-001/002/003 and P2-009 Securitize items — one Securitize engagement resolves all of them.

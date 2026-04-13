@@ -6,7 +6,7 @@
 **Mirrored In:** `02-core-docs/phase-01-foundation/FLAMINGO-P1-002-locked-decisions-final.md`
 **Owner:** Project Owner
 **Status:** DRAFTED — unresolved items are non-blocking
-**Last Updated:** 2026-04-11 (context sync — 9 new locked decisions added; CLD-002 promoted to locked; UI-002 closed)
+**Last Updated:** 2026-04-12 (8 new locked decisions added LD-044–LD-051; CLD-005 and CLD-006 added; CLD-001 updated with TA instruction packet provisional note)
 
 ---
 
@@ -179,14 +179,38 @@ REQUESTED → UNDER_REVIEW → APPROVED → CHAIN_EXECUTED → TA_INSTRUCTION_SE
 
 ---
 
+### 5.11 Vendor and Provider Locks
+
+| ID | Decision | Status |
+|---|---|---|
+| LD-044 | The primary verification provider for KYC, AML, and accredited-investor verification for Flamingo v1 is VerifyInvestor. The verification architecture must remain modular so that Parallel Markets or other approved providers can be added in future iterations without redesigning the compliance workflow. Separation of KYC and AML vendors is architecturally supported if jurisdiction, quality, or compliance requirements make that necessary. | LOCKED |
+
+---
+
+### 5.12 Operating Model and Workflow Locks
+
+| ID | Decision | Status |
+|---|---|---|
+| LD-045 | SPV formation for Flamingo offerings follows a standardized legal process using approved counsel templates and repeatable operating steps. Flamingo may track SPV formation status and required inputs as an operational workflow item. Flamingo does not automate legal entity formation as a software function in v1. | LOCKED |
+| LD-046 | v1 uses strict single-wallet eligibility by default. Each approved investor or entity relationship maps to one primary Approved Wallet. Alternative wallet registration follows a controlled replacement workflow; simultaneous active wallets per investor are not supported in the default v1 model. | LOCKED |
+| LD-047 | Wallet approval in v1 follows strict eligibility criteria including investor identity linkage, approval status, and a controlled replacement workflow. Wallet changes require admin authorization; ad-hoc or self-service wallet replacement is not permitted. | LOCKED |
+| LD-048 | Material role changes require dual approval. No single administrator may unilaterally assign or remove material platform roles. Specific role scope and the definition of "material" are governed by the permission model (P2-003) and CLD-003. | LOCKED |
+| LD-049 | Flamingo uses a hybrid reconciliation model: (a) daily formal reconciliation between the Flamingo Operational Registry and expected TA state; (b) immediate reconciliation or escalation for high-risk events (e.g., unexpected TA signal absence, on-chain/operational state divergence). The specific SLA and escalation threshold for category (b) requires Securitize confirmation (CLD-004). | LOCKED |
+| LD-050 | An offering may not be considered operationally ready to accept subscriptions or advance to the active state until all required legal documents for that offering stage are complete and validated. Flamingo tracks document completion as an offering readiness gate. Document-level requirements per offering type are governed by P2-004 (Offering Onboarding Workflow). | LOCKED |
+| LD-051 | Flamingo uses strict retention rules for material records, audit trails, and supporting evidence. Material records — including audit log entries, transfer decision records, eligibility verification records, and offering documents — must be retained per applicable regulatory requirements. Specific retention durations require Reg D counsel input (P2-015, UI-P2-013-003). The obligation to retain is locked; the specific duration is conditionally locked pending legal input. | LOCKED |
+
+---
+
 ## 6. Conditionally Locked Decisions
 
 | ID | Decision | Locked Pending | Notes |
 |---|---|---|---|
-| CLD-001 | Specific Securitize API endpoints and data fields at TA_INSTRUCTION_SENT and TA_ACKNOWLEDGED. | [REQUIRES SECURITIZE CONFIRMATION] | Integration point is structurally locked; technical specifics are not. |
+| CLD-001 | Specific Securitize API endpoints and data fields at TA_INSTRUCTION_SENT and TA_ACKNOWLEDGED. | [REQUIRES SECURITIZE CONFIRMATION] | Integration point is structurally locked; technical specifics are not. **Drafting note (2026-04-12):** Flamingo maintains an internal TA instruction packet standard for documentation and service design. This internal standard will be refined or replaced by the official Securitize-confirmed format when partner confirmation is obtained. |
 | ~~CLD-002~~ | ~~Reg D exemption sub-type (506(b) vs 506(c)) applicable per offering.~~ | **RESOLVED — promoted to LD-043** | Confirmed as 506(c) accredited investors only. See Section 5.9. |
 | CLD-003 | Authorized role matrix for state transition triggers — specific roles and permission levels. | [REQUIRES SECOND STREET INPUT] | Admin-review requirement (LD-023) is locked; specific role assignment is not. |
-| CLD-004 | Reconciliation process and SLA between Flamingo operational registry and transfer agent records. | [REQUIRES SECURITIZE CONFIRMATION] | Discrepancy resolution rule (LD-017) is locked; operational process is not. |
+| CLD-004 | Reconciliation process and SLA between Flamingo operational registry and transfer agent records. | [REQUIRES SECURITIZE CONFIRMATION] | Discrepancy resolution rule (LD-017) is locked; operational process is not. Hybrid cadence model is now locked (LD-049); the specific escalation threshold for high-risk events requires Securitize confirmation. |
+| CLD-005 | Specific 506(c) transfer restriction and holding-period rules applicable to Flamingo v1 offerings. | [REQUIRES REG D COUNSEL CONFIRMATION] | Provisional conservative transfer-restriction model is used for drafting. Final 506(c) transfer restriction rules require Reg D counsel confirmation before finalization or implementation. Blocking for finalization. |
+| CLD-006 | TA instruction packet format: the official Securitize-confirmed data fields, field types, and submission protocol for TA instruction packets. | [REQUIRES SECURITIZE CONFIRMATION] | Flamingo internal TA instruction packet standard is established for documentation and service design. This internal standard will be replaced by the Securitize-confirmed format when partner confirmation is obtained. Structurally non-blocking for Phase 2 and Phase 3 drafting. |
 
 ---
 

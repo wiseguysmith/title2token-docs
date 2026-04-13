@@ -1,7 +1,7 @@
 # STATUS BOARD
 
 **Project:** Flamingo
-**Last Updated:** 2026-04-12 (P2-004 Offering Onboarding Workflow drafted — 10 OB principles; 6-stage OS model; 7 onboarding objects; two internal approval gates; external dependency tracking; downstream readiness gate table; upstream offering input for P2-005, P2-006, P2-007, P2-009, P2-011)
+**Last Updated:** 2026-04-12 (P2-014 Reconciliation and Break Resolution drafted — Phase 2 now 14 of 16 DRAFTED; P2-010 Transfer Exception Handling drafted — Phase 2 now 13 of 16 DRAFTED; context sync — LD-044–LD-051 added; CLD-005/006 added; P2-007 Token Representation Model drafted — Phase 2 now 12 of 16 DRAFTED; previously: P2-013 Audit Event and Logging Policy drafted — Phase 2 now 11 of 16 DRAFTED; previously: P2-011 Cap Table and Registry Boundary drafted — Phase 2 now 10 of 16 DRAFTED; previously: P2-006 Subscription and Allocation Boundary drafted — 10 SA principles; 7-state SS model (SS-001–SS-007); readiness intersection model (PR-001–PR-005); participation object model; allocation handling boundary; downstream issuance/minting boundary; source-of-truth implications; 8 non-blocking open items — Phase 2 now 9 of 16 DRAFTED)
 
 ---
 
@@ -74,6 +74,34 @@ See `01-doc-operations/rules/CONTEXT-SYNC-NOTES.md` for full analysis.
 
 ---
 
+## Context Sync Notes (2026-04-12)
+
+The following decisions were resolved and locked on 2026-04-12. All are now reflected in LOCKED-DECISIONS.md.
+
+| Item | Resolution | LD / CLD |
+|---|---|---|
+| Verification provider for KYC, AML, and accreditation | VerifyInvestor as primary v1 provider; modular architecture for future addition/separation | **LD-044 locked** |
+| SPV formation process | Standardized legal process; Flamingo tracks status; no automation of legal entity formation | **LD-045 locked** |
+| Single-wallet eligibility model | Strict single-wallet by default; one primary Approved Wallet per investor/entity | **LD-046 locked** |
+| Wallet criteria | Strict eligibility criteria; controlled replacement workflow; admin authorization required | **LD-047 locked** |
+| Dual approval for role changes | Material role changes require dual approval | **LD-048 locked** |
+| Reconciliation cadence | Hybrid model: daily formal + immediate for high-risk events; specific SLA pending Securitize | **LD-049 locked** |
+| Legal docs before offering readiness | All required legal docs must be complete and validated before offering advances to ready state | **LD-050 locked** |
+| Retention rules | Strict retention for material records, audit trails, supporting evidence; duration pending Reg D counsel | **LD-051 locked** |
+| 506(c) transfer restriction specifics | Provisional conservative model for drafting; blocking for finalization pending Reg D counsel | **CLD-005 added** |
+| TA instruction packet format | Internal provisional standard established for drafting; to be confirmed/replaced by Securitize | **CLD-006 added; CLD-001 annotated** |
+
+**Open items partially resolved by LD-044:**
+- P2-004 (Offering Onboarding): KYC vendor and accreditation provider items → VerifyInvestor resolves vendor-selection dependency
+- P2-005 (Investor Intake): KYC vendor selection and accreditation provider selection items → resolved by LD-044
+- P2-013 (Audit Event and Logging): UI-P2-013-004 (provider event classification) → vendor selection resolved; event field semantics still require VerifyInvestor integration detail
+
+**Pending P1 revision queue (carry-forward from 2026-04-11):**
+- P1-005 (Authority Model): add LD-040/041 precedence rules to narrative section
+- P1-008 (Source of Truth Matrix): name Base explicitly; enumerate its 4 authority domains
+
+---
+
 ## Phase 02 — Product / Control Docs
 
 | ID | Document | Status | Unresolved Items | Notes |
@@ -83,15 +111,15 @@ See `01-doc-operations/rules/CONTEXT-SYNC-NOTES.md` for full analysis.
 | FLAMINGO-P2-003 | Permission Model | DRAFTED | 7 non-blocking (5× internal, 1× Second Street, 1× cross-border legal) | 10 permission principles; 10 permission classes; 14 permission-controlled objects; full action matrix; lifecycle-sensitive rules for all 8 states; upstream permission input for P2-004, P2-005, P2-008, P2-009, P2-016, P3-014 |
 | FLAMINGO-P2-004 | Offering Onboarding Workflow | DRAFTED | 8 non-blocking (3× Second Street SPV/role/eligibility, 1× Reg D counsel transfer restrictions, 1× Securitize TA setup, 1× internal accreditation provider, 1× KYC vendor, 1× cross-border legal) | 10 OB principles; 6-stage OS model (OS-001–OS-006); 7 onboarding objects; two internal approval gates; external dependency tracking; downstream readiness gate table; upstream offering input for P2-005, P2-006, P2-007, P2-009, P2-011 |
 | FLAMINGO-P2-005 | Investor Intake and Eligibility Boundary | DRAFTED | 7 non-blocking (2× Reg D counsel currency windows, 1× entity criteria Reg D counsel, 1× cross-border legal, 1× KYC vendor selection, 1× accreditation provider selection, 1× internal wallet cardinality) | 10 IE principles; 6-state ES model; 3-track prerequisite model (accreditation / KYC/AML / Approved Wallet); accreditation and KYC/AML routing boundary; prohibited eligibility language; upstream eligibility input for P2-004, P2-006, P2-008, P2-009 |
-| FLAMINGO-P2-006 | Subscription and Allocation Boundary | SHELL CREATED | — | |
-| FLAMINGO-P2-007 | Token Representation Model | SHELL CREATED | — | |
+| FLAMINGO-P2-006 | Subscription and Allocation Boundary | DRAFTED | 8 non-blocking (5× Second Street/internal, 2× Reg D counsel, 1× Reg D counsel + Second Street) | 10 SA principles; 7-state SS model; readiness intersection model (PR-001–PR-005); participation object model; allocation handling boundary; downstream issuance/minting boundary; source-of-truth implications; upstream subscription/allocation input for P2-007, P2-011, P2-013, P2-016 |
+| FLAMINGO-P2-007 | Token Representation Model | DRAFTED | 5 non-blocking (2× Securitize, 1× Reg D counsel, 2× Second Street) | 10 TR principles; onchain/offchain boundary; ERC-3643 enforcement boundary; Approved Wallet model; 3-layer authority model for token state; 10 prohibited token assumptions; upstream token model for P3-007, P3-002, P2-016 |
 | FLAMINGO-P2-008 | Transfer Request and Review Control | DRAFTED | 8 non-blocking (3× internal, 2× Second Street, 2× Reg D counsel, 1× cross-border legal) | Gated admin-reviewed workflow; transfer request object model; 4 decision paths (approve/reject/return/escalate); lifecycle alignment REQUESTED–APPROVED; upstream workflow control input for P2-009, P3-004, P3-005 |
 | FLAMINGO-P2-009 | Admin-Reviewed Transfer Policy | DRAFTED | 8 non-blocking (4× Reg D counsel, 2× Second Street, 1× internal, 1× cross-border legal) | 10 review policy principles (RP-001–RP-010); approval/rejection/correction/escalation criteria; 10 rejection classes (C-REJ-001–C-REJ-010); decision priority hierarchy; completion boundary alignment §14; upstream policy input for P3-008 compliance review workbench |
-| FLAMINGO-P2-010 | Transfer Exception Handling | SHELL CREATED | — | |
-| FLAMINGO-P2-011 | Cap Table and Registry Boundary | SHELL CREATED | — | |
+| FLAMINGO-P2-010 | Transfer Exception Handling | DRAFTED | 7 non-blocking (2× Reg D counsel, 2× Securitize, 3× Second Street) | 10 EH principles; 10 exception classes (EX-001–EX-010); EX-010 as post-TA-instruction escalation wrapper; 4-level escalation authority model; handling rules per class; prohibited assumption table; upstream exception input for P2-014, P3-013 |
+| FLAMINGO-P2-011 | Cap Table and Registry Boundary | DRAFTED | 6 non-blocking (3× Securitize, 2× Second Street, 1× Reg D counsel) | 10 RC principles; 8 operational record categories (OR-001–OR-008); 3-layer model (Operational Registry / Base / TA); 4 certainty levels; 5 divergence rules (DV-001–DV-005); upstream input for P2-013, P2-014, P2-016, P3-002, P3-003 |
 | FLAMINGO-P2-012 | Legal vs Operational Completion | DRAFTED | 7 non-blocking (3× Securitize, 2× Reg D counsel, 1× cross-border legal, 1× internal) | 12 completion principles; 6 completion layers + REDEEMED; completion state interpretation table for all 8 states; product display rules; upstream completion framework for P2-008, P2-009, P2-013, P2-014, P3-004, P3-006, P3-007 |
-| FLAMINGO-P2-013 | Audit Event and Logging Policy | SHELL CREATED | — | |
-| FLAMINGO-P2-014 | Reconciliation and Break Resolution | SHELL CREATED | — | |
+| FLAMINGO-P2-013 | Audit Event and Logging Policy | DRAFTED | 6 non-blocking (2× Securitize, 1× vendor selection, 2× legal/cross-border, 1× Second Street) | 10 AL principles; 13 event categories (EC-001–EC-013); 5 source classifications (ES-INT/ES-ACTOR/ES-REVIEW/ES-EXT/ES-CHAIN); minimum event record fields; heightened EC-007 requirements; upstream logging input for P2-014, P2-015, P2-016, P3-009 |
+| FLAMINGO-P2-014 | Reconciliation and Break Resolution | DRAFTED | 7 non-blocking (4× Securitize, 1× Reg D counsel, 2× Second Street) | 10 RP principles; 2-axis model (TA / on-chain); 7 break classes (BR-001–BR-007); daily + immediate cadence (LD-049); break resolution rules per class; 4-level escalation; exception/break hand-off from P2-010; upstream reconciliation input for P3-012 |
 | FLAMINGO-P2-015 | Data Retention and Documentation Boundary | SHELL CREATED | — | |
 | FLAMINGO-P2-016 | Operator Console Controls | SHELL CREATED | — | |
 
