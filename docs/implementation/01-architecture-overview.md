@@ -23,9 +23,9 @@ Primary constraints come from:
 The Phase 3 prep layer is organized as:
 
 - `packages/domain/`
-  Canonical implementation-safe enums, IDs, and core entities
+  Canonical implementation-safe enums, IDs, core entities, and state helpers
 - `packages/integration-contracts/`
-  Adapter contracts, shared signal/result types, and mocks
+  Adapter contracts, shared signal/result types, and non-production mocks
 - `contracts/`
   Reserved for future ERC-3643 / Base implementation work
 - `apps/`

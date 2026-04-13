@@ -37,10 +37,10 @@ Human-gated shared layer by default:
 ## Branch Model
 
 - `master`: coordination baseline
-- `phase3/claude`: Claude working branch
-- `phase3/codex`: Codex working branch
+- `phase3/claude`: recommended Claude branch
+- `phase3/codex`: recommended Codex branch
 
-No model should commit directly to the other model's branch.
+If these branches do not exist locally, use a human-assigned equivalent. No model should commit directly to the other model's branch.
 
 ## File Ownership Rules
 

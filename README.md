@@ -1,6 +1,6 @@
 # Title2Token Phase 3 Repo
 
-This repository contains the canonical Flamingo documentation set plus the Phase 3 implementation-prep scaffold for Title2Token.
+This repository contains the canonical Flamingo documentation set plus an early Phase 3 implementation-prep scaffold for Title2Token.
 
 ## What Is In Scope Here
 
@@ -22,6 +22,21 @@ This repository contains the canonical Flamingo documentation set plus the Phase
 - `contracts/`: future smart contract implementation area
 - `infra/`: environment and deployment scaffolding
 - `docs/handoff/`: build handoff files for the next execution phase
+
+## Current Reality
+
+This repo is not a finished implementation workspace yet.
+
+What exists now:
+- strong canonical documentation
+- early implementation-prep docs
+- shared package scaffolding
+- placeholder app, contract, and infrastructure folders
+
+What does not exist yet:
+- completed implementation-critical Phase 3 docs
+- production code
+- verified build tooling in this environment
 
 ## Constraint Reminder
 

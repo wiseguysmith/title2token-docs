@@ -10,6 +10,11 @@ export class MockBlockchainAdapter implements IBlockchainAdapter {
   readonly adapterName = "MockBlockchainAdapter";
 
   private readonly eventsByOffering = new Map<OfferingId, BlockchainEvent[]>();
+  private readonly now: () => string;
+
+  constructor(now: () => string = () => "1970-01-01T00:00:00.000Z") {
+    this.now = now;
+  }
 
   async executeApprovedTransfer(
     request: BlockchainTransferExecutionRequest,
@@ -39,7 +44,7 @@ export class MockBlockchainAdapter implements IBlockchainAdapter {
     const event: BlockchainEvent = {
       eventType: "ALLOWLIST_UPDATED",
       offeringId,
-      occurredAt: new Date().toISOString(),
+      occurredAt: this.now(),
       message: `Mock allowlist ${approved ? "approval" : "revocation"} for wallet ${walletId}.`,
     };
 

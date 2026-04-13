@@ -101,7 +101,7 @@ See `01-doc-operations/rules/CONTEXT-SYNC-NOTES.md` for full analysis.
 
 | ID | Document | Status | Unresolved Items | Notes |
 |---|---|---|---|---|
-| FLAMINGO-P3-001 | Service Architecture | SHELL CREATED | — | |
+| FLAMINGO-P3-001 | Service Architecture | DRAFTED | 8 non-blocking (2× Securitize, 2× internal, 2× Reg D counsel, 1× Second Street, 1× internal) | Modular monolith with strict bounded modules; Workflow/State Machine separated from Transfers; Operational Registry separated from orchestration; Reconciliation separated from transfer progression; centralized adapter layer; explicit truth-layer protection rules; explicit v1 exclusions |
 | FLAMINGO-P3-002 | Domain Model | SHELL CREATED | — | |
 | FLAMINGO-P3-003 | Data Object Catalog | SHELL CREATED | — | |
 | FLAMINGO-P3-004 | State Machine Specification | SHELL CREATED | — | Must use 8-state chain from P1-002 LD-021 |

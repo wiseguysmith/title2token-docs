@@ -1,1 +1,50 @@
 FLAMINGO-P3-001 Service Architecture — Answers
+
+Architecture defaults applied:
+- Modular monolith selected as v1 default architecture
+- Workflow/state-machine kept separate from Transfers service
+- Operational Registry kept separate from orchestration
+- Reconciliation kept separate from Transfers
+- Adapter layer centralized for TA, blockchain, KYC/AML, accreditation
+- Audit kept as centralized sink boundary with module-level event emission
+- Admin-web explicitly prohibited from calling external adapters directly
+
+Primary anchors used:
+- Locked Decisions (identity, authority, blockchain, lifecycle, completion, v1 scope)
+- P1-005 Authority Model
+- P1-006 System Context
+- P1-008 Source-of-Truth Matrix
+- P1-009 Canonical Transfer Lifecycle
+- P2-003 Permission Model
+- P2-004 Offering Onboarding Workflow
+- P2-005 Investor Intake and Eligibility Boundary
+- P2-008 Transfer Request and Review Control
+- P2-009 Admin-Reviewed Transfer Policy
+- P2-012 Legal vs Operational Completion
+- current implementation-prep docs and package scaffolding
+
+Major drafting choices:
+1. Framed services/modules as bounded responsibilities rather than deployables.
+2. Added explicit "must never claim" language to each major service to stop authority drift.
+3. Added truth-layer protection rules as a dedicated section because this is the highest-risk area for implementation misuse.
+4. Treated all external boundary specifics as abstracted because vendor/provider details remain unresolved.
+5. Added a "Not in v1 architecture" section to enforce scope exclusions explicitly.
+
+Key non-confusion protections embedded:
+- CHAIN_EXECUTED = technical execution only
+- TA_ACKNOWLEDGED ≠ TA_RECORDED
+- LEGALLY_COMPLETE requires confirmed TA_RECORDED
+- Operational Registry ≠ legal books and records
+- blockchain event logs ≠ legal holder-of-record evidence
+- reconciliation compares truths but does not replace them
+
+Defaults not applied:
+- none; all provided working-session defaults were compatible with current repo truth
+
+Open issues preserved rather than guessed:
+- exact TA API and signal semantics
+- reconciliation SLA / cadence / escalation details
+- provider-specific KYC/AML and accreditation models
+- final user-facing status wording
+- exact ERC-3643 implementation profile
+- exact role-trigger matrix details

@@ -5,10 +5,10 @@ import type {
 } from "@title2token/domain";
 
 export const TA_SIGNAL_TYPES = [
-  "ACKNOWLEDGED",
-  "RECORDED",
-  "REJECTED",
-  "ERROR",
+  "TA_ACKNOWLEDGED",
+  "TA_RECORDED",
+  "TA_REJECTED",
+  "TA_ERROR",
 ] as const;
 
 export type TaSignalType = (typeof TA_SIGNAL_TYPES)[number];

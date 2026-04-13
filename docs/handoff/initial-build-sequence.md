@@ -9,6 +9,6 @@ Start with:
 
 ## Notes
 
-- The current repo is now prepared for the next build phase, but not all canonical Phase 3 docs are complete
+- The current repo is partially prepared for the next build phase, but not all canonical Phase 3 docs are complete
 - External integration specifics remain intentionally generic
 - Any build work that implies legal finality from chain events should be treated as a blocker

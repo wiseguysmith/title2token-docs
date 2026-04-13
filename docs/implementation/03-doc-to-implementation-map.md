@@ -33,7 +33,7 @@ The following implementation-critical docs are still shells and should be comple
 
 | Area | Current Package / Folder |
 |---|---|
-| Shared lifecycle and authority primitives | `packages/domain` |
+| Shared lifecycle, authority, and completion-layer helpers | `packages/domain` |
 | External integration contracts | `packages/integration-contracts` |
 | Smart contract implementation | `contracts/` |
 | Deployable apps | `apps/` |

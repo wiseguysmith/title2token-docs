@@ -37,3 +37,4 @@ Recommended: `phase3/claude`
 
 - Do not edit Codex-owned directories
 - Shared overview and governance files remain human-gated unless explicitly assigned
+- Use the recommended branch name only if that branch actually exists in the local checkout

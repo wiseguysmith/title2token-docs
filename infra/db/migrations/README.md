@@ -1,0 +1,3 @@
+# Migrations
+
+Migration placeholder area.
