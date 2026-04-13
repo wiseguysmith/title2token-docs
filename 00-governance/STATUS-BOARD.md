@@ -1,7 +1,7 @@
 # STATUS BOARD
 
 **Project:** Flamingo
-**Last Updated:** 2026-04-12 (P2-014 Reconciliation and Break Resolution drafted — Phase 2 now 14 of 16 DRAFTED; P2-010 Transfer Exception Handling drafted — Phase 2 now 13 of 16 DRAFTED; context sync — LD-044–LD-051 added; CLD-005/006 added; P2-007 Token Representation Model drafted — Phase 2 now 12 of 16 DRAFTED; previously: P2-013 Audit Event and Logging Policy drafted — Phase 2 now 11 of 16 DRAFTED; previously: P2-011 Cap Table and Registry Boundary drafted — Phase 2 now 10 of 16 DRAFTED; previously: P2-006 Subscription and Allocation Boundary drafted — 10 SA principles; 7-state SS model (SS-001–SS-007); readiness intersection model (PR-001–PR-005); participation object model; allocation handling boundary; downstream issuance/minting boundary; source-of-truth implications; 8 non-blocking open items — Phase 2 now 9 of 16 DRAFTED)
+**Last Updated:** 2026-04-12 (P2-015 Data Retention and Documentation Boundary drafted — Phase 2 now 16 of 16 DRAFTED; P2-016 Operator Console Controls drafted — Phase 2 complete; previously: P2-014 Reconciliation and Break Resolution drafted — Phase 2 now 14 of 16 DRAFTED; P2-010 Transfer Exception Handling drafted; context sync — LD-044–LD-051 added; CLD-005/006 added; P2-007 Token Representation Model drafted; P2-013 Audit Event and Logging Policy drafted; P2-011 Cap Table and Registry Boundary drafted; P2-006 Subscription and Allocation Boundary drafted)
 
 ---
 
@@ -120,8 +120,30 @@ The following decisions were resolved and locked on 2026-04-12. All are now refl
 | FLAMINGO-P2-012 | Legal vs Operational Completion | DRAFTED | 7 non-blocking (3× Securitize, 2× Reg D counsel, 1× cross-border legal, 1× internal) | 12 completion principles; 6 completion layers + REDEEMED; completion state interpretation table for all 8 states; product display rules; upstream completion framework for P2-008, P2-009, P2-013, P2-014, P3-004, P3-006, P3-007 |
 | FLAMINGO-P2-013 | Audit Event and Logging Policy | DRAFTED | 6 non-blocking (2× Securitize, 1× vendor selection, 2× legal/cross-border, 1× Second Street) | 10 AL principles; 13 event categories (EC-001–EC-013); 5 source classifications (ES-INT/ES-ACTOR/ES-REVIEW/ES-EXT/ES-CHAIN); minimum event record fields; heightened EC-007 requirements; upstream logging input for P2-014, P2-015, P2-016, P3-009 |
 | FLAMINGO-P2-014 | Reconciliation and Break Resolution | DRAFTED | 7 non-blocking (4× Securitize, 1× Reg D counsel, 2× Second Street) | 10 RP principles; 2-axis model (TA / on-chain); 7 break classes (BR-001–BR-007); daily + immediate cadence (LD-049); break resolution rules per class; 4-level escalation; exception/break hand-off from P2-010; upstream reconciliation input for P3-012 |
-| FLAMINGO-P2-015 | Data Retention and Documentation Boundary | SHELL CREATED | — | |
-| FLAMINGO-P2-016 | Operator Console Controls | SHELL CREATED | — | |
+| FLAMINGO-P2-015 | Data Retention and Documentation Boundary | DRAFTED | 6 non-blocking (3× legal/cross-border, 3× Second Street) | 10 DR principles; 7 retention categories (RC-A through RC-G); 5 material categories per LD-051; immutability model (DR-003); retention boundary vs. TA/providers; legal hold model; downstream input for P3-009, P3-012, P3-013, P3-015 |
+| FLAMINGO-P2-016 | Operator Console Controls | DRAFTED | 7 non-blocking (7× Second Street) | 10 CC principles; 8 console surfaces (CS-001–CS-008); role-based access table; mandatory certainty labels per CC-004; dual-approval enforcement per LD-048; action controls per P2-003; audit history display rules; downstream input for P3-008, P3-014 |
+
+---
+
+## Phase 2 Completion Note (2026-04-12)
+
+All 16 Phase 2 product/control documents are now DRAFTED. Phase 3 drafting may begin for all documents that do not have external gates.
+
+**Pending Phase 1 revision queue (non-blocking, carry-forward):**
+- P1-005 (Authority Model): add LD-040/LD-041 precedence rules to narrative section
+- P1-008 (Source of Truth Matrix): name Base explicitly; enumerate its 4 authority domains
+
+**High-priority external gates before Phase 3 content drafting:**
+- P3-006, P3-012: [REQUIRES SECURITIZE CONFIRMATION] — TA signal format, readback scope, lag SLA, and inquiry protocol (CLD-001, CLD-004). Resolves: UI-P2-007-001/002, UI-P2-010-004/005, UI-P2-011-001/002, UI-P2-013-001/002, UI-P2-014-001–004
+- P2-015 duration values: [REQUIRES REG D COUNSEL INPUT] — retention periods for RC-A through RC-E (UI-P2-015-001). Required before P3-009, P3-012, P3-015 can finalize storage design
+- CLD-003 (role matrix): [REQUIRES SECOND STREET INPUT] — referenced by UI items across P2-006, P2-010, P2-011, P2-013, P2-014, P2-016. Required before P3-008 and P3-014 can finalize access control design
+
+**Recommended Phase 3 entry points (no external gates):**
+- P3-001 — Service Architecture
+- P3-002 — Domain Model
+- P3-003 — Data Object Catalog
+- P3-004 — State Machine Specification (must use 8-state chain from LD-021)
+- P3-013 — Error and Exception Model (consumes EX-001–EX-010 from P2-010)
 
 ---
 
