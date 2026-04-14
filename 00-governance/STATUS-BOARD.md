@@ -151,7 +151,7 @@ All 16 Phase 2 product/control documents are now DRAFTED. Phase 3 drafting may b
 
 | ID | Document | Status | Unresolved Items | Notes |
 |---|---|---|---|---|
-| FLAMINGO-P3-001 | Service Architecture | SHELL CREATED | — | |
+| FLAMINGO-P3-001 | Service Architecture | DRAFTED | 6 non-blocking (3× Securitize, 1× Reg D counsel, 1× Second Street, 1× internal) | High-level service map; 14 bounded modules; truth-layer protection rules; adapter boundary model; what remains abstracted; v1 exclusions | — | |
 | FLAMINGO-P3-002 | Domain Model | SHELL CREATED | — | |
 | FLAMINGO-P3-003 | Data Object Catalog | SHELL CREATED | — | |
 | FLAMINGO-P3-004 | State Machine Specification | SHELL CREATED | — | Must use 8-state chain from P1-002 LD-021 |
@@ -192,4 +192,4 @@ signal format confirmation (CLD-001, CLD-004).
 **Remaining Phase 3 shells to draft** (working branch):
 P3-002, P3-003, P3-004, P3-005, P3-006, P3-008, P3-009, P3-010, P3-011, P3-013, P3-015, P3-016
 
-**P3-001 note:** Full draft exists on `master` (commit bbb71979). Pending copy to working branch via API. Do not redraft.
+**P3-001 note:** Copied from `master` to working branch 2026-04-14. Now DRAFTED on working branch.
