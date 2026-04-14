@@ -1,1 +1,47 @@
-FLAMINGO-P3-007 Blockchain Execution Service — Answers
+FLAMINGO-P3-007 — Blockchain Execution Service: Blockchain Bridge
+ANSWERS FILE — Source: PHASE 3 LOCKED ANSWERS SOURCE BLOCK DOC 17
+
+Q: Primary token standard for v1?
+A: ERC-3643 on Base network (LD-035, LD-036).
+
+Q: What is the Bridge's role?
+A: Controlled orchestration layer for on-chain actions, event ingestion, and confirmation tracking.
+   It does not generate TA instruction packets. It does not constitute legal authority.
+
+Q: What on-chain actions does v1 support?
+A: Mint, burn, freeze, unfreeze, allowlist updates, transfer-restriction-related writes.
+
+Q: Application behavior model?
+A: Asynchronous job/workflow-based. Callers do not block on on-chain confirmation.
+
+Q: Transaction lifecycle stages?
+A: TX_SUBMITTED -> pending confirmation -> TX_CONFIRMED -> EVENT_INGESTED -> handoff to downstream service.
+
+Q: Delayed or failed confirmation handling?
+A: Retry with configurable thresholds. Visible pending state. RECONCILIATION_SIGNAL_RAISED on escalation.
+
+Q: TA packet model?
+A: Bridge emits canonical execution result (TX_CONFIRMED). Downstream Transfer Orchestration
+   advances state to CHAIN_EXECUTED. A separate downstream process generates the TA instruction packet.
+   Bridge does not generate or send TA packets directly.
+
+Q: TA instruction packet format?
+A: UNRESOLVED. Must remain behind interface/config. [REQUIRES SECURITIZE CONFIRMATION] (CLD-006)
+
+Q: RPC provider model?
+A: Primary RPC provider + fallback provider abstraction. Provider-specific details are configurable.
+
+Q: Gas strategy?
+A: Simple app-controlled submission with configurable gas policy. No hardcoded values.
+
+Q: Canonical Bridge event categories?
+A: TX_SUBMITTED, TX_CONFIRMED, TX_FAILED, EVENT_INGESTED, ALLOWLIST_UPDATED,
+   TOKENS_MINTED, TOKENS_BURNED, TOKENS_FROZEN, TOKENS_UNFROZEN,
+   TRANSFER_WRITE_EXECUTED, RECONCILIATION_SIGNAL_RAISED
+
+Q: What abstractions must remain behind interfaces?
+A: TA instruction packet format, Securitize API specifics, exact holding-period rule encoding,
+   some confirmation semantics, RPC provider identity.
+
+Q: Does CHAIN_EXECUTED mean legal completion?
+A: No. LD-026: on-chain execution does not constitute legal transfer completion.
