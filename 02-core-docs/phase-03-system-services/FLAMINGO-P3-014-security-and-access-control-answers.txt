@@ -1,1 +1,51 @@
-FLAMINGO-P3-014 Security and Access Control — Answers
+FLAMINGO-P3-014 — Security and Access Control: Wallet and Permissions Service
+ANSWERS FILE — Source: PHASE 3 LOCKED ANSWERS SOURCE BLOCK DOC 14
+
+Q: Wallet count at MVP?
+A: One primary wallet per investor/entity. Optional secondary by Compliance Officer approval only.
+
+Q: Can one wallet map to more than one investor/entity?
+A: No. Strict uniqueness constraint enforced at data and service layer.
+
+Q: Internal wallet states?
+A: SUBMITTED, UNDER_REVIEW, APPROVED, REJECTED, FROZEN, REPLACEMENT_PENDING, REVOKED
+
+Q: What blocks during REPLACEMENT_PENDING?
+A: All material actions (transfers, subscriptions) referencing the original wallet.
+
+Q: What happens to the old wallet after replacement is approved?
+A: Immediately moved to REVOKED. No simultaneous-APPROVED overlap at MVP.
+
+Q: When is Securitize notified of wallet changes?
+A: Only after replacement wallet reaches APPROVED state. Never during review.
+
+Q: Emergency freeze triggers?
+A: Lost access, suspected compromise, sanctions flag, legal hold.
+
+Q: Who can apply an emergency freeze?
+A: Compliance Officer or Platform Admin.
+
+Q: RBAC for material wallet actions?
+A: Tenant Admin: submit wallet, initiate replacement.
+   Compliance Officer: approve, reject, authorize replacement, freeze, unfreeze.
+   Platform Admin: emergency freeze, revoke.
+
+Q: How does allowlist sync work?
+A: Wallet Service emits canonical wallet change event.
+   Blockchain Bridge consumes event and writes allowlist update to ERC-3643 on Base.
+   Wallet Service does not interact directly with the blockchain.
+
+Q: User-facing wallet status labels?
+A: SUBMITTED -> "Submitted"
+   UNDER_REVIEW -> "Under review"
+   APPROVED -> "Approved"
+   REJECTED -> "Action required"
+   FROZEN -> "Frozen"
+   REPLACEMENT_PENDING -> "Replacement in progress"
+   REVOKED -> "Replaced"
+
+Q: Authority when Flamingo allowlist and Base diverge?
+A: Base is authoritative for enforcement (LD-041). Flamingo must investigate and resolve.
+
+Q: Are revoked wallet records retained?
+A: Yes. Material records per LD-051. Deletion not permitted.
