@@ -1,0 +1,43 @@
+FLAMINGO-P3-017 — Registry and Reporting Service
+ANSWERS FILE — Source: PHASE 3 LOCKED ANSWERS SOURCE BLOCK DOC 15
+
+Q: v1 purpose of Registry and Reporting Service?
+A: Internal operational registry + investor/admin reporting layer.
+   Registry is operational only — not legal books-and-records.
+
+Q: If Flamingo and Securitize are not fully aligned, how is this shown?
+A: Show operational balance and legal/TA status separately. Never collapse into one status.
+
+Q: Investor-facing reporting surfaces?
+A: Holdings dashboard, transaction history, distribution history, downloadable statement.
+
+Q: Issuer/admin-facing reporting surfaces?
+A: Cap table, subscription/allocation status, transfer activity, discrepancy queue, distribution status.
+
+Q: Must reports distinguish operational state from legal holder-of-record state?
+A: Yes. Where relevant, must be explicitly separated with layer labels.
+
+Q: Investor statement delivery channels?
+A: Portal + downloadable PDF/statement. Optional email notification (notification only, not full report).
+
+Q: Is tax reporting in scope for v1?
+A: No. Explicitly out of scope.
+
+Q: Export formats for v1?
+A: CSV and PDF. JSON/API export is post-v1.
+
+Q: Disclaimer posture?
+A: Prominent disclaimer on all reports: operational registry is informational;
+   legal holder-of-record matters governed by transfer agent.
+
+Q: How to handle reports during an unresolved discrepancy?
+A: Generate report with discrepancy banner / flagged sections.
+   Use canonical wording: "Reconciliation review in progress".
+   Must not hide or omit discrepancy.
+
+Q: Report retention posture?
+A: Versioned snapshots with timestamps. Generated report history maintained.
+
+Q: Is there a report taxonomy and disclaimer standard?
+A: Reference separate report taxonomy + disclaimer standard document (not yet defined).
+   [REQUIRES SECOND STREET INPUT]

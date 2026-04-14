@@ -1,1 +1,98 @@
-FLAMINGO-P2-014-reconciliation-and-break-resolution Reconciliation And Break Resolution — Answers
+FLAMINGO-P2-014 Reconciliation and Break Resolution — Design Rationale
+
+===================================================================
+QUESTION 1: Why a two-axis model (TA axis / on-chain axis) rather than a single reconciliation framework?
+===================================================================
+
+Because the two external authoritative layers have different authority domains, different precedence rules, and different detection methods. Collapsing them into a single axis would require handling the two separately anyway — the two-axis model makes the distinction explicit upfront.
+
+TA axis: Flamingo's Operational Registry vs. Securitize's legal books-and-records.
+- What's being compared: lifecycle state, holder-of-record confirmation, TA signal receipts
+- Precedence: Securitize-wins (LD-040, LD-017)
+- Detection: comparison of OR-004/OR-006 against TA signals received
+- Resolution: Flamingo updates its registry to match confirmed TA state; it cannot modify TA records
+
+On-chain axis: Flamingo's Operational Registry vs. Base blockchain state.
+- What's being compared: token balances, allowlist state, minted supply
+- Precedence: Base-wins for enforcement (LD-041)
+- Detection: comparison of OR-005/OR-007 against on-chain state from Base
+- Resolution: Flamingo updates its operational view to match confirmed on-chain state
+
+A single-axis model would require RP-003 to have a combined precedence rule — but "who wins" is different for each axis. The two-axis model keeps these authority domains clean.
+
+===================================================================
+QUESTION 2: Why is expected in-flight lag (RP-004) explicitly excluded from break classification?
+===================================================================
+
+To prevent false-positive break generation during normal TA processing windows.
+
+After TA_INSTRUCTION_SENT, there is a structurally expected period before TA_ACKNOWLEDGED is received. During this window, Flamingo's registry shows TA_INSTRUCTION_SENT and the TA has not yet signaled back. If every such transfer were classified as a BR-002 break immediately, the reconciliation queue would be flooded with false positives — every in-flight transfer pending TA acknowledgment would appear as a break.
+
+The correct model is:
+1. Transfer sends TA instruction → TA_INSTRUCTION_SENT state → monitoring begins
+2. Signal expected within normal window → expected in-flight state → no break
+3. Signal absent beyond normal window → EX-006 exception triggered → escalation
+4. Escalated EX-006 confirmed as persistent absence → BR-002 break classified
+
+This staged approach — normal lag / exception / break — prevents false positives while ensuring persistent absences are caught and escalated. RP-004 is [P] pending the actual lag window from Securitize (UI-P2-014-003), because without that number, the transition from "expected lag" to "exception" cannot be precisely defined.
+
+===================================================================
+QUESTION 3: Why does RP-007 (no unilateral external modification) exist as an explicit principle?
+===================================================================
+
+Because the temptation to "fix" a discrepancy by acting on the external system rather than the internal registry would undermine the authority model.
+
+If Flamingo could instruct Securitize to change its records as part of reconciliation, Flamingo would effectively be modifying the legal books-and-records — which is Securitize's exclusive domain (LD-011, LD-012). The principle exists to make clear that Flamingo's reconciliation process flows in one direction only: detect discrepancy → update Flamingo's registry to match the authoritative source.
+
+Similarly, if Flamingo could trigger on-chain state changes (e.g., modify token balances or allowlist entries) as a reconciliation action, it would be using reconciliation as a mechanism to change technical state that ERC-3643 governs. The correct process for on-chain changes is the transfer workflow, not reconciliation.
+
+RP-007 closes this off explicitly so that P3-012 (Reconciliation Engine) does not inadvertently design a mechanism that reaches into the TA or on-chain layer.
+
+===================================================================
+QUESTION 4: Why are there seven break classes rather than a simpler model?
+===================================================================
+
+Each break class represents a distinct discrepancy type with a different resolution path:
+
+BR-001 (TA state mismatch): Flamingo and TA disagree on where a transfer is in its lifecycle. Resolution: update Flamingo's registry to match TA signal.
+
+BR-002 (TA signal absent, escalated): No signal at all — differs from BR-001 (conflicting signals) in that the cause is unknown. Resolution: inquiry-first; cannot assume TA has or has not processed.
+
+BR-003 (TA record conflict): Internally inconsistent TA signals — always escalates because Flamingo cannot determine which signal is correct. Resolution: Securitize must confirm.
+
+BR-004 (on-chain balance mismatch): Token balances differ. May indicate a missed event or unauthorized transfer. Resolution path depends on whether the discrepancy is explainable.
+
+BR-005 (on-chain allowlist mismatch): Allowlist state differs. May indicate a missed admission/revocation event or unauthorized allowlist change.
+
+BR-006 (issuance record mismatch): Supply totals differ. An unexplained higher on-chain supply is a critical escalation (possible unauthorized minting).
+
+BR-007 (registry consistency break): Internal Flamingo inconsistency — two of Flamingo's own records contradict each other. Does not involve an external layer; resolved internally.
+
+Grouping BR-001/BR-002/BR-003 together would create a "TA discrepancy" class with three different resolution paths embedded in it — that's not simpler, it's just hidden complexity. The seven-class model surfaces the differences explicitly.
+
+===================================================================
+QUESTION 5: Why does reconciliation explicitly not resolve legal completion?
+===================================================================
+
+Because reconciliation is an alignment process, not a legal determination.
+
+When Flamingo resolves a BR-001 break by updating its registry to show TA_RECORDED (because the TA signal was confirmed), what has happened is: Flamingo's operational record is now consistent with the TA signal received. The legal books-and-records entry exists at Securitize; Flamingo's registry reflects that Flamingo received and validated the signal.
+
+This is not Flamingo making a legal determination that the transfer is complete. The legal completion is the TA's act of recording the transfer. Flamingo's registry is aligned to reflect that Flamingo received evidence of that act.
+
+If reconciliation were described as "resolving legal completion," it would imply Flamingo has legal authority it does not have. RP-001 and §13.3 preserve the boundary explicitly so that downstream documents (P2-015, P2-016, P3-012) do not describe reconciliation in legally overclaiming terms.
+
+===================================================================
+UNRESOLVED ITEMS SUMMARY
+===================================================================
+
+UI-P2-014-001: TA readback data scope [REQUIRES SECURITIZE CONFIRMATION] (CLD-001)
+UI-P2-014-002: TA reconciliation signal format and semantics [REQUIRES SECURITIZE CONFIRMATION] (CLD-001, CLD-006)
+UI-P2-014-003: Expected TA signal lag window [REQUIRES SECURITIZE CONFIRMATION] (CLD-004)
+UI-P2-014-004: TA inquiry and escalation protocol [REQUIRES SECURITIZE CONFIRMATION] (CLD-001)
+UI-P2-014-005: Regulatory reporting obligations for reconciliation breaks [REQUIRES REG D COUNSEL INPUT]
+UI-P2-014-006: Maximum break resolution window [REQUIRES SECOND STREET INPUT]
+UI-P2-014-007: Reconciliation operator role [REQUIRES SECOND STREET INPUT] (CLD-003)
+
+All 7 are non-blocking for Phase 2 and Phase 3 drafting continuation.
+UI-P2-014-001 through UI-P2-014-004 are on the same CLD-001/CLD-004 Securitize resolution path as items in P2-010, P2-011, and P2-013.

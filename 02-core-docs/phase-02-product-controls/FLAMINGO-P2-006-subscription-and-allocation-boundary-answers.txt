@@ -1,1 +1,85 @@
-FLAMINGO-P2-006-subscription-and-allocation-boundary Subscription And Allocation Boundary — Answers
+FLAMINGO-P2-006 Subscription and Allocation Boundary — Design Rationale
+
+===================================================================
+QUESTION 1: Why a seven-state subscription model (SS-001–SS-007)?
+===================================================================
+
+A simpler binary (subscribed / not subscribed) or three-state model would lose the operational distinctions that matter for admin review, audit integrity, and downstream handoffs.
+
+The seven states capture materially distinct operational moments:
+- SS-001 vs SS-002: submission and active admin review are different moments for audit purposes; the system needs to record when a human opened the record for review
+- SS-002 vs SS-003: the allocation decision is the key admin action; it must be a distinct, explicitly recorded state
+- SS-003 vs SS-006: allocation is recorded, but token minting is a separate downstream action; conflating them would create false completion signals
+- SS-006 vs SS-007: pending-issuance and minting-confirmed are distinct because the trigger between them (P2-007 minting initiation) is a separate workflow step that must be tracked and logged
+- SS-004 and SS-005 are both terminal non-allocation paths but differ: rejection is an admin decision; withdrawal is an actor-initiated action. Both must be preserved for audit.
+
+===================================================================
+QUESTION 2: Why admin-controlled allocation as the v1 default?
+===================================================================
+
+Three reasons:
+1. LD-029 locks out automated workflow in v1. Admin-reviewed transfers are the model. By extension, the allocation decision — which is upstream of token issuance and eventual transfer — should follow the same admin-review philosophy until Second Street specifies otherwise.
+2. Second Street has not confirmed allocation rules (UI-P2-006-001). Choosing any algorithmic default (FCFS, pro-rata) would embed a business rule that could conflict with their actual deal-flow approach.
+3. Private placement allocation for Reg D 506(c) offerings is typically a deliberate, issuer-driven decision — not a first-come-first-served mechanical process. The admin-controlled default is consistent with how private placements actually work.
+
+===================================================================
+QUESTION 3: Why are subscription and allocation treated as distinct from transfer?
+===================================================================
+
+The canonical 8-state transfer lifecycle (P1-009, LD-021) begins at REQUESTED. It does not include a subscription or allocation phase. These are pre-transfer operational steps.
+
+Conflating them would:
+- imply that an allocation creates a transfer obligation (it doesn't — it creates an issuance authorization)
+- blur the completion layer boundaries (P2-012) between allocation, minting, and legal completion
+- create false transfer-lifecycle state for records that haven't entered the transfer workflow at all
+
+The subscription/allocation workflow feeds the transfer context (an investor with a minted allocation has a token balance to potentially transfer) but it is a separate workflow with separate state tracking.
+
+===================================================================
+QUESTION 4: Why is allocation separated from legal issuance / holder-of-record?
+===================================================================
+
+Authority Model (P1-005, AP-001–AP-010) and locked decisions LD-011, LD-040 establish that legal holder-of-record status is determined by the transfer agent (Securitize), not by Flamingo operational records.
+
+An allocation record in Flamingo answers the question: "what amount has the platform operationally assigned to this investor?" It does not answer the question: "is this investor a legal holder of record for this amount?"
+
+That legal determination happens when the transfer agent records the holding in its books-and-records (TA_RECORDED, per P1-009 and P2-012). No Flamingo operational record — subscription, allocation, or minting confirmation — can substitute for TA recordation as the legal event.
+
+===================================================================
+QUESTION 5: Why a readiness intersection model as its own section (§8)?
+===================================================================
+
+P2-006 is structurally positioned at the junction of two upstream gating workflows: offering onboarding (P2-004) and investor eligibility (P2-005). Neither upstream doc fully defines the intersection — that logic belongs in P2-006.
+
+The intersection produces what this document calls "participation readiness": the state in which both gates are independently satisfied and subscription may proceed. Making this a dedicated section ensures:
+- downstream documents (P2-007, P2-011) can cite it by section reference
+- engineering can implement the prerequisite check against a named specification
+- reviewers can confirm that both gates are actually enforced independently, without one being treated as a proxy for the other
+
+===================================================================
+QUESTION 6: Why capture subscription agreement reference as an unresolved field?
+===================================================================
+
+The subscription agreement is the operative legal document between investor and issuer. Whether Flamingo captures a reference to it (as metadata), and what triggers that capture, depends on Second Street's workflow.
+
+Options include:
+- Reference captured when investor signs (requires integration with external document workflow)
+- Reference captured when admin confirms agreement execution (manual admin action)
+- No reference captured; agreement is entirely external to Flamingo
+
+All three are plausible. Guessing which one is operationally correct would embed a business assumption that may not match actual Second Street process. The field is included in the minimum field set but marked as pending input (UI-P2-006-003).
+
+===================================================================
+UNRESOLVED ITEMS SUMMARY
+===================================================================
+
+UI-P2-006-001: Allocation methodology [REQUIRES SECOND STREET INPUT]
+UI-P2-006-002: Capacity cap enforcement [REQUIRES SECOND STREET INPUT]
+UI-P2-006-003: Subscription agreement execution workflow [REQUIRES SECOND STREET INPUT]
+UI-P2-006-004: Issuance trigger definition [REQUIRES INTERNAL DECISION]
+UI-P2-006-005: Authorized role for allocation [REQUIRES SECOND STREET INPUT] (CLD-003)
+UI-P2-006-006: Legal timing of subscription agreement formation [REQUIRES REG D COUNSEL INPUT]
+UI-P2-006-007: Accreditation re-confirmation at subscription [REQUIRES REG D COUNSEL INPUT]
+UI-P2-006-008: Entity investor allocation handling [REQUIRES REG D COUNSEL INPUT] / [REQUIRES SECOND STREET INPUT]
+
+All 8 are non-blocking for Phase 2 and Phase 3 drafting continuation.
