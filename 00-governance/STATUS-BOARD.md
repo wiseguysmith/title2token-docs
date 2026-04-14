@@ -154,7 +154,7 @@ All 16 Phase 2 product/control documents are now DRAFTED. Phase 3 drafting may b
 | FLAMINGO-P3-001 | Service Architecture | DRAFTED | 6 non-blocking (3× Securitize, 1× Reg D counsel, 1× Second Street, 1× internal) | High-level service map; 14 bounded modules; truth-layer protection rules; adapter boundary model; what remains abstracted; v1 exclusions | — | |
 | FLAMINGO-P3-002 | Domain Model | SHELL CREATED | — | |
 | FLAMINGO-P3-003 | Data Object Catalog | SHELL CREATED | — | |
-| FLAMINGO-P3-004 | State Machine Specification | SHELL CREATED | — | Must use 8-state chain from P1-002 LD-021 |
+| FLAMINGO-P3-004 | State Machine Specification | DRAFTED | 9 | 2026-04-14 | P1-009, P2-008, P2-012, P3-001, P3-005, P3-006, P3-007, P3-012 |
 | FLAMINGO-P3-005 | Transfer Orchestration Service | SHELL CREATED | — | |
 | FLAMINGO-P3-006 | TA Integration Service | SHELL CREATED | — | [REQUIRES SECURITIZE CONFIRMATION] at content stage |
 | FLAMINGO-P3-007 | Blockchain Execution Service | DRAFTED | 5 non-blocking (2× Securitize, 1× Reg D counsel, 2× Second Street) | Blockchain Bridge; ERC-3643 on Base; 11 canonical bridge event categories; TA handoff boundary; retry/escalation model; abstractions behind interfaces |
@@ -169,27 +169,3 @@ All 16 Phase 2 product/control documents are now DRAFTED. Phase 3 drafting may b
 | FLAMINGO-P3-016 | Observability and Operational Monitoring | SHELL CREATED | — | |
 | FLAMINGO-P3-017 | Registry and Reporting Service | DRAFTED | 5 non-blocking (2× Second Street, 1× Reg D counsel, 1× cross-border, 1× internal) | Operational registry model; investor + admin reporting surfaces; disclaimer posture; discrepancy-aware reporting; CSV+PDF exports v1 |
 | FLAMINGO-P3-018 | Offering Management Service | DRAFTED | 6 non-blocking (3× Second Street, 1× Reg D counsel, 1× cross-border, 1× Securitize) | SPV formation tracking; offering lifecycle (10 states); draft-to-live approval workflow; oversubscription + min-raise handling; amendment model; mandatory metadata fields |
-
----
-
-## Phase 3 Partial Completion Note (2026-04-14)
-
-The following Phase 3 documents are now DRAFTED:
-
-- P3-007 — Blockchain Execution Service (Blockchain Bridge)
-- P3-012 — Reconciliation Engine (includes canonical user-facing completion + discrepancy wording)
-- P3-014 — Security and Access Control (Wallet and Permissions Service)
-- P3-017 — Registry and Reporting Service (new doc — added to Phase 3)
-- P3-018 — Offering Management Service (new doc — added to Phase 3)
-
-**Cross-cutting note:** P3-012 section 5.1 establishes the canonical user-facing wording table for
-all completion states and discrepancy states. This table must be applied consistently across all
-reporting and display surfaces.
-
-**Securitize-gated docs (P3-006, P3-012 full finalization):** Remain blocked pending Securitize
-signal format confirmation (CLD-001, CLD-004).
-
-**Remaining Phase 3 shells to draft** (working branch):
-P3-002, P3-003, P3-004, P3-005, P3-006, P3-008, P3-009, P3-010, P3-011, P3-013, P3-015, P3-016
-
-**P3-001 note:** Copied from `master` to working branch 2026-04-14. Now DRAFTED on working branch.
