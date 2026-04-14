@@ -167,3 +167,25 @@ All 16 Phase 2 product/control documents are now DRAFTED. Phase 3 drafting may b
 | FLAMINGO-P3-014 | Security and Access Control | SHELL CREATED | — | |
 | FLAMINGO-P3-015 | Environment and Configuration Boundary | SHELL CREATED | — | |
 | FLAMINGO-P3-016 | Observability and Operational Monitoring | SHELL CREATED | — | |
+
+---
+
+## Phase 3 Partial Completion Note (2026-04-13)
+
+The following Phase 3 documents are now DRAFTED:
+
+- P3-007 — Blockchain Execution Service (Blockchain Bridge)
+- P3-012 — Reconciliation Engine (includes canonical user-facing completion + discrepancy wording)
+- P3-014 — Security and Access Control (Wallet and Permissions Service)
+- P3-017 — Registry and Reporting Service (new doc — added to Phase 3)
+- P3-018 — Offering Management Service (new doc — added to Phase 3)
+
+**Cross-cutting note:** P3-012 section 5.1 establishes the canonical user-facing wording table for
+all completion states and discrepancy states. This table must be applied consistently across all
+reporting and display surfaces.
+
+**Securitize-gated docs (P3-006, P3-012 full finalization):** Remain blocked pending Securitize
+signal format confirmation (CLD-001, CLD-004).
+
+**Remaining Phase 3 shells to draft:**
+P3-001, P3-002, P3-003, P3-004, P3-005, P3-006, P3-008, P3-009, P3-010, P3-011, P3-013, P3-015, P3-016
