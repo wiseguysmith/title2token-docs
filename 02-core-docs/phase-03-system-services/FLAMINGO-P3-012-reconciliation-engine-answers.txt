@@ -1,1 +1,47 @@
-FLAMINGO-P3-012 Reconciliation Engine — Answers
+FLAMINGO-P3-012 — Reconciliation Engine
+ANSWERS FILE — Source: PHASE 3 LOCKED ANSWERS SOURCE BLOCK — CROSS-CUTTING ADDENDUM
+
+Q: Reconciliation model?
+A: Event-driven checks + daily formal reconciliation (LD-049).
+
+Q: Reconciliation sources?
+A: Flamingo Operational Registry vs Securitize TA vs Base on-chain state.
+
+Q: Discrepancy categories?
+A: TA_LAG, DATA_MISMATCH, CHAIN_SYNC_FAILURE, COMPLIANCE_INCONSISTENCY,
+   WALLET_INTEGRITY_ISSUE, LEGAL_RECORD_CONFLICT
+
+Q: Severity levels?
+A: Info, Warning, High, Critical
+
+Q: Blocking discrepancy set?
+A: Legal record conflict, sanctions-related inconsistency, wallet compromise,
+   unresolved high-severity quantity mismatch, issuance/transfer state conflict.
+
+Q: Blocking response?
+A: Freeze dependent actions, create discrepancy case, notify responsible roles,
+   require resolution workflow.
+
+Q: Discrepancy ownership model?
+A: Reconciliation/ops first. Compliance/legal engaged as needed.
+   TA-side discrepancies require Securitize engagement.
+
+Q: User-facing wording for CHAIN_EXECUTED?
+A: "Processed onchain" or "Onchain processing complete"
+
+Q: User-facing wording for TA_RECORDED?
+A: "Transfer agent updated"
+
+Q: User-facing wording for LEGALLY_COMPLETE?
+A: "Recorded and complete"
+
+Q: User-facing wording for REDEEMED?
+A: "Redemption in progress" (during) -> "Redeemed" (complete)
+   NOTE: REDEEMED is not the same as LEGALLY_COMPLETE (LD-042).
+
+Q: User-facing wording for discrepancy under investigation?
+A: "Reconciliation review in progress"
+
+Q: When can "Recorded and complete" be displayed?
+A: Only after LEGALLY_COMPLETE state confirmed via TA signal.
+   Must not be displayed at CHAIN_EXECUTED or TA_ACKNOWLEDGED.
