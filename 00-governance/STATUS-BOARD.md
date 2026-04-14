@@ -157,20 +157,22 @@ All 16 Phase 2 product/control documents are now DRAFTED. Phase 3 drafting may b
 | FLAMINGO-P3-004 | State Machine Specification | SHELL CREATED | — | Must use 8-state chain from P1-002 LD-021 |
 | FLAMINGO-P3-005 | Transfer Orchestration Service | SHELL CREATED | — | |
 | FLAMINGO-P3-006 | TA Integration Service | SHELL CREATED | — | [REQUIRES SECURITIZE CONFIRMATION] at content stage |
-| FLAMINGO-P3-007 | Blockchain Execution Service | SHELL CREATED | — | Must not imply legal finality from chain events |
+| FLAMINGO-P3-007 | Blockchain Execution Service | DRAFTED | 5 non-blocking (2× Securitize, 1× Reg D counsel, 2× Second Street) | Blockchain Bridge; ERC-3643 on Base; 11 canonical bridge event categories; TA handoff boundary; retry/escalation model; abstractions behind interfaces |
 | FLAMINGO-P3-008 | Compliance Review Workbench | SHELL CREATED | — | |
 | FLAMINGO-P3-009 | Audit Log Service | SHELL CREATED | — | |
 | FLAMINGO-P3-010 | Notification and Tasking Service | SHELL CREATED | — | |
 | FLAMINGO-P3-011 | Document and Artifact Service | SHELL CREATED | — | |
-| FLAMINGO-P3-012 | Reconciliation Engine | SHELL CREATED | — | [REQUIRES SECURITIZE CONFIRMATION] at content stage |
+| FLAMINGO-P3-012 | Reconciliation Engine | DRAFTED | 5 non-blocking (2× Securitize, 1× Reg D counsel, 1× cross-border, 1× Second Street) | Event-driven + daily formal reconciliation; 6 discrepancy categories; 4 severity levels; blocking discrepancy model; canonical user-facing completion + discrepancy wording |
 | FLAMINGO-P3-013 | Error and Exception Model | SHELL CREATED | — | |
-| FLAMINGO-P3-014 | Security and Access Control | SHELL CREATED | — | |
+| FLAMINGO-P3-014 | Security and Access Control | DRAFTED | 6 non-blocking (2× Securitize, 1× Reg D counsel, 2× Second Street, 1× cross-border) | Wallet lifecycle (7 states); replacement + freeze workflows; RBAC; allowlist sync boundary; user-facing wallet status labels |
 | FLAMINGO-P3-015 | Environment and Configuration Boundary | SHELL CREATED | — | |
 | FLAMINGO-P3-016 | Observability and Operational Monitoring | SHELL CREATED | — | |
+| FLAMINGO-P3-017 | Registry and Reporting Service | DRAFTED | 5 non-blocking (2× Second Street, 1× Reg D counsel, 1× cross-border, 1× internal) | Operational registry model; investor + admin reporting surfaces; disclaimer posture; discrepancy-aware reporting; CSV+PDF exports v1 |
+| FLAMINGO-P3-018 | Offering Management Service | DRAFTED | 6 non-blocking (3× Second Street, 1× Reg D counsel, 1× cross-border, 1× Securitize) | SPV formation tracking; offering lifecycle (10 states); draft-to-live approval workflow; oversubscription + min-raise handling; amendment model; mandatory metadata fields |
 
 ---
 
-## Phase 3 Partial Completion Note (2026-04-13)
+## Phase 3 Partial Completion Note (2026-04-14)
 
 The following Phase 3 documents are now DRAFTED:
 
@@ -187,5 +189,7 @@ reporting and display surfaces.
 **Securitize-gated docs (P3-006, P3-012 full finalization):** Remain blocked pending Securitize
 signal format confirmation (CLD-001, CLD-004).
 
-**Remaining Phase 3 shells to draft:**
-P3-001, P3-002, P3-003, P3-004, P3-005, P3-006, P3-008, P3-009, P3-010, P3-011, P3-013, P3-015, P3-016
+**Remaining Phase 3 shells to draft** (working branch):
+P3-002, P3-003, P3-004, P3-005, P3-006, P3-008, P3-009, P3-010, P3-011, P3-013, P3-015, P3-016
+
+**P3-001 note:** Full draft exists on `master` (commit bbb71979). Pending copy to working branch via API. Do not redraft.
