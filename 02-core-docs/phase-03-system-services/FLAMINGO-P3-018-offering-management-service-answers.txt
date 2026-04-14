@@ -1,0 +1,47 @@
+FLAMINGO-P3-018 — Offering Management Service
+ANSWERS FILE — Source: PHASE 3 LOCKED ANSWERS SOURCE BLOCK DOC 16
+
+Q: Who is responsible for SPV formation?
+A: Tenant + counsel jointly. Flamingo orchestrates workflow tracking only.
+   Flamingo does not automate legal entity formation (LD-045).
+
+Q: What is the source for offering documents?
+A: Approved tenant/counsel template sets. Tracked as a readiness gate (LD-050).
+
+Q: How are economic rights changes handled post-issuance?
+A: Formal amendment workflow with approval gates and audit trail. No silent overwrites.
+
+Q: How is oversubscription handled?
+A: Manual allocation after subscription window closes. Offering moves to ALLOCATION_PENDING.
+   No automated pro-rata or FIFO allocation in v1.
+
+Q: What happens if minimum raise is not met?
+A: Offering moves to PAUSED. Issuer must decide: extend, cancel, or restructure.
+   No automatic cancellation.
+
+Q: Mandatory v1 offering metadata fields?
+A: offering_id, tenant_id, issuer_spv_name, issuer_spv_jurisdiction,
+   issuer_spv_formation_status, offering_title, offering_type, exemption_model,
+   token_symbol/class_label, target_raise_min, target_raise_max,
+   subscription_open_date, subscription_close_date,
+   counsel_template_set_ref, offering_docs_package_ref, lifecycle_state.
+
+Q: Who may create a draft offering?
+A: Tenant Admin or issuer operator.
+
+Q: What gates the DRAFT -> live transition?
+A: Formal approval workflow with operational and legal checkpoints (LD-050).
+
+Q: How are material field corrections handled after issuance?
+A: Formal correction/amendment workflow. Approval gates. Full audit trail. Prior value retained.
+
+Q: What service owns the offering lifecycle?
+A: Offering Management Service owns offering lifecycle and references
+   subscription/allocation sub-objects within the same bounded context.
+
+Q: User-facing offering statuses?
+A: Draft, In review, Ready for onboarding, Open, Allocation pending,
+   Issued, Active, Paused, Closed, Archived.
+
+Q: What is the exemption model for all v1 offerings?
+A: Reg D Rule 506(c) (LD-043). All investors must be accredited.
