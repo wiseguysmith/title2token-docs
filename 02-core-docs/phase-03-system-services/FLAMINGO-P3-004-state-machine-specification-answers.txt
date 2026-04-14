@@ -1,1 +1,41 @@
-FLAMINGO-P3-004 State Machine Specification — Answers
+Q: What is the difference between TA_ACKNOWLEDGED and TA_RECORDED in the state machine?
+A: TA_ACKNOWLEDGED is Securitize's signal that it received the instruction from Flamingo. TA_RECORDED is Securitize's signal that it has recorded the transfer in its legal books and records. These are separate events, separate signals, and must never be conflated. A transfer at TA_ACKNOWLEDGED is not yet recorded legally.
+
+Q: Can a transfer skip UNDER_REVIEW?
+A: No. LD-023 and LD-029 require that all v1 transfers pass through manual compliance review. There is no expedited or self-service bypass. Any attempt to skip UNDER_REVIEW is a defect and must be rejected.
+
+Q: What does CHAIN_EXECUTED mean legally?
+A: Nothing. CHAIN_EXECUTED is technical execution only. The token has moved on the blockchain. But the investor's legal ownership is still governed by the transfer agent's prior records. Legal completion requires TA_RECORDED.
+
+Q: If a transfer is at CHAIN_EXECUTED but TA hasn't recorded it, what is the truth?
+A: On-chain state is: token transferred. TA state is: prior holder still on record (TA has not seen the instruction yet or has not recorded it). Flamingo state is: CHAIN_EXECUTED. All three are correct and operating independently. If this gap persists past SLA, reconciliation detects it as TA_LAG. Resolution follows TA authority (TA_RECORDED is the ground truth for legal ownership).
+
+Q: Who is authorized to move a transfer from REQUESTED to UNDER_REVIEW?
+A: An authorized admin actor. Not an investor. Not an automated system. An explicit admin action with authorization proof is required.
+
+Q: What happens if blockchain execution fails?
+A: The transfer remains at APPROVED. A failure record is created. Automatic retry occurs with exponential backoff (up to N attempts). After terminal failure, the transfer is escalated to admin with HIGH priority. Admin may re-attempt, escalate to Second Street, or reject.
+
+Q: Can a transfer move backward in the state machine?
+A: No, except through explicit reconciliation overrides. Once a state is entered, the transfer may only move forward. If a remediation is needed, it follows the reconciliation process (P3-012), not normal state progression.
+
+Q: What is the minimum evidence required to enter CHAIN_EXECUTED?
+A: Confirmed on-chain execution event with transaction hash, block number, confirmation count, and RPC timestamp. Plus a Bridge service timestamp record in the OR.
+
+Q: What is the minimum evidence required to enter TA_RECORDED?
+A: Confirmed TA recording signal from Securitize with recording confirmation ID and timestamp. The signal must indicate that the TA has recorded in its legal books.
+
+Q: What truth layer governs when a transfer is legally complete?
+A: The Transfer Agent (Securitize) is the authority for legal completion. TA_RECORDED in Securitize's legal books is the ground truth. Flamingo recognizes it by entering LEGALLY_COMPLETE in the OR. But Flamingo does not declare legal completion — it reflects it.
+
+Q: If TA acknowledges but then doesn't record within SLA, what happens?
+A: The transfer remains at TA_ACKNOWLEDGED. A STALLED flag is set. Reconciliation Engine is notified. Admin is notified with WARNING priority. No automatic retry — TA has acknowledged and must complete recording. Pinging TA for status requires Securitize coordination.
+
+Q: Can a transfer at TA_INSTRUCTION_SENT be automatically retransmitted if no ACK is received?
+A: Yes. Automatic re-transmission occurs up to M times (M to be confirmed by Securitize) with waits between retries. After M failures, it escalates to Securitize and admin with CRITICAL priority.
+
+Q: What happens if a transfer is at APPROVED and a new compliance rule prevents it from being approved?
+A: It doesn't matter. APPROVED is in the past. The transfer has already been approved. Moving it forward is the responsibility of downstream services (Bridge for execution, etc.). If a new rule is introduced, it would apply to new requests, not approved transfers.
+
+Q: What is a "STALLED" transfer?
+A: A transfer that remains in an intermediate state past expected timing without transitioning. It is not a state — it is an operational flag set by Reconciliation Engine. A stalled transfer triggers admin notification and possible escalation but does not automatically cause state regression or cancellation.
